@@ -4,10 +4,11 @@ import DashSidebar from '../components/DashSidebar';
 import DashProfile from '../components/DashProfile';
 import DashUsers from '../components/DashUsers';
 import DashboardComp from '../components/DashboardComp';
+import ProductPage from '../pages/Product';
 
 export default function Dashboard() {
   const location = useLocation();
-  const [tab, setTab] = useState('');
+  const [tab, setTab] = useState('dash');
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -23,12 +24,16 @@ export default function Dashboard() {
         {/* Sidebar */}
         <DashSidebar />
       </div>
-      {/* Profile */}
-      {tab === 'profile' && <DashProfile />}
-      {/* Users... */}
-      {tab === 'users' && <DashUsers />}
-      {/* dashboard comp */ }
-      {tab === 'dash' && <DashboardComp />}
+      <div className="flex-grow p-4">
+        {/* Profile */}
+        {tab === 'profile' && <DashProfile />}
+        {/* Users */}
+        {tab === 'users' && <DashUsers />}
+        {/* Dashboard */}
+        {tab === 'dash' && <DashboardComp />}
+        {/* Products */}
+        {tab === 'products' && <ProductPage />} 
+      </div>
     </div>
   )
 }
