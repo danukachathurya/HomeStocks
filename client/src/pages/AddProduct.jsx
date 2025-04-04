@@ -5,6 +5,7 @@ import {
   FileInput,
   Datepicker,
   Alert,
+  Label,
 } from "flowbite-react";
 import { useState, useRef } from "react";
 import ReactQuill from "react-quill";
@@ -41,36 +42,42 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
       "expiryDate",
       "description",
     ];
-
+  
     for (let field of requiredFields) {
       if (!formData[field] || formData[field].toString().trim() === "") {
         return `All fields are required.`;
       }
     }
-
+  
     if (isNaN(formData.price) || parseFloat(formData.price) <= 0) {
-      return "Price must be a valid number greater than 0.";
+      return "Price must be a number.";
     }
-
+  
     if (!Number.isInteger(Number(formData.quantity)) || formData.quantity <= 0) {
-      return "Quantity must be a valid integer greater than 0.";
+      return "Quantity must be a positive number.";
     }
-
+  
     if (
       !Number.isInteger(Number(itemCodeStart)) ||
       !Number.isInteger(Number(itemCodeEnd)) ||
       itemCodeStart <= 0 ||
       itemCodeEnd <= 0
     ) {
-      return "Item code start and end must be valid positive integers.";
+      return "Item code start and end must be valid numbers.";
     }
-
+  
     if (parseInt(itemCodeStart) > parseInt(itemCodeEnd)) {
       return "Item code start must be less than or equal to item code end.";
     }
-
+  
+    const itemCodeCount = parseInt(itemCodeEnd) - parseInt(itemCodeStart) + 1;
+    if (itemCodeCount !== parseInt(formData.quantity)) {
+      return `Item code range size (${itemCodeCount}) must match quantity (${formData.quantity}).`;
+    }
+  
     return null;
   };
+  
 
   const handleImageUpload = () => {
     if (!file) {
@@ -143,6 +150,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
       <Modal.Header>Add Product</Modal.Header>
       <Modal.Body>
         <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
+          <Label htmlFor="category" value="Category" />
           <TextInput
             placeholder="Category"
             onChange={(e) =>
@@ -152,6 +160,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               }))
             }
           />
+          <Label htmlFor="category" value="Category" />
           <TextInput
             placeholder="Supplier Name"
             onChange={(e) =>
@@ -161,6 +170,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               }))
             }
           />
+          <Label htmlFor="category" value="Category" />
           <TextInput
             placeholder="Item Name"
             onChange={(e) =>
@@ -170,9 +180,9 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               }))
             }
           />
+          <Label htmlFor="Price" value="Price" />
           <TextInput
             placeholder="Price"
-            type="number"
             onChange={(e) =>
               setFormData((prevData) => ({
                 ...prevData,
@@ -180,6 +190,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               }))
             }
           />
+          <Label htmlFor="Add Image" value="Add Image" />
           <div className="flex gap-2 items-center">
             <FileInput
               accept="image/*"
@@ -212,9 +223,9 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               className="h-32 object-cover mt-2"
             />
           )}
+          <Label htmlFor="Quantity" value="Quantity" />
           <TextInput
             placeholder="Quantity"
-            type="number"
             onChange={(e) =>
               setFormData((prevData) => ({
                 ...prevData,
@@ -222,19 +233,19 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               }))
             }
           />
+          <Label htmlFor="Item Code" value="Item Code" />
           <div className="flex gap-2">
             <TextInput
               placeholder="Item Code Start"
-              type="number"
               onChange={(e) => setItemCodeStart(e.target.value)}
             />
             <TextInput
               placeholder="Item Code End"
-              type="number"
               onChange={(e) => setItemCodeEnd(e.target.value)}
             />
           </div>
           <div className="flex gap-2">
+            <Label htmlFor="Purchase Date" value="Purchase Date" />
             <Datepicker
               placeholder="Purchase Date"
               onSelectedDateChanged={(date) =>
@@ -244,6 +255,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
                 }))
               }
             />
+            <Label htmlFor="Expiry Date" value="Expiry Date" />
             <Datepicker
               placeholder="Expiry Date"
               onSelectedDateChanged={(date) =>
@@ -254,6 +266,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               }
             />
           </div>
+          <Label htmlFor="Description" value="Description" />
           <ReactQuill
             ref={quillRef}
             theme="snow"
