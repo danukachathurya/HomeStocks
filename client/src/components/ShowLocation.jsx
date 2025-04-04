@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
 
-const GOOGLE_MAPS_API_KEY = 'AIzaSyCzi_t3H1prLmwX89SWwardYVn7am7Rdd8'; // Replace with your real key
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 const ShowLocation = ({ category, onLocationSelect, selectedLocationId }) => {
   const [userLocation, setUserLocation] = useState(null);
@@ -172,7 +172,7 @@ const ShowLocation = ({ category, onLocationSelect, selectedLocationId }) => {
             position={{ lat: loc.latitude, lng: loc.longitude }}
             onClick={() => {
               setSelectedLocation(loc);
-              onLocationSelect(loc); // Update parent
+              onLocationSelect(loc);
             }}
           />
         ))}
