@@ -13,6 +13,8 @@ import ScrollToTop from "./components/ScrollToTop";
 import Search from "./pages/Search";
 import AddProduct from "./pages/AddProduct";
 import Product from "./pages/Product";
+import DisposalItems from "./pages/DisposalItems";
+import DisposeDetails from "./pages/DisposeDetails";
 
 export default function App() {
   return (
@@ -31,6 +33,8 @@ export default function App() {
         <Route element={<OnlyAdminPrivateRoute />}>
           <Route path="/add-product" element={<AddProduct />} />
           <Route path="/products/:productId" element={<Product />} />
+          <Route path="/disposal" element={<DisposalItems />} />
+          <Route path="/show-dispose" element={<DisposeDetails />} />
         </Route>
         <Route path="*" element={<h1 className="text-center mt-10 text-3xl">404 - Page Not Found</h1>} />
       </Routes>

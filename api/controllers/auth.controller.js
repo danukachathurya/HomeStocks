@@ -7,7 +7,7 @@ export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
 
   if (
-    !username ||
+    !username || 
     !email ||
     !password ||
     username === "" ||
