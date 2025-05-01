@@ -1,15 +1,9 @@
-const express = require('express');
+import express from "express";
+import { assignPosition } from "../controllers/admin.controller.js";
+import { verifyToken } from "../utils/verifyUser.js";
+
 const router = express.Router();
-const { registerAdmin, loginAdmin } = require('../controllers/adminController');
-const { protectAdmin } = require('../middleware/authMiddleware');
 
-// Public routes
-router.post('/register', registerAdmin);
-router.post('/login', loginAdmin);
+router.post("/assign-position", verifyToken, assignPosition);
 
-// Protected route example
-router.get('/dashboard', protectAdmin, (req, res) => {
-  res.json({ message: `Welcome Admin ${req.admin.username}` });
-});
-
-module.exports = router;
+export default router;
