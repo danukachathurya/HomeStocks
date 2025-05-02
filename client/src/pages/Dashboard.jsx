@@ -5,6 +5,10 @@ import DashProfile from '../components/DashProfile';
 import DashUsers from '../components/DashUsers';
 import DashboardComp from '../components/DashboardComp';
 import ProductPage from '../pages/Product';
+import ExpireSoon from './ExpireSoon';
+import HighDemand from './HighDemand';
+import DisposalItem from './DisposalItems';
+import DisposeDetails from './DisposeDetails';
 
 export default function Dashboard() {
   const location = useLocation();
@@ -32,7 +36,15 @@ export default function Dashboard() {
         {/* Dashboard */}
         {tab === 'dash' && <DashboardComp />}
         {/* Products */}
-        {tab === 'products' && <ProductPage />} 
+        {tab === 'products' && <ProductPage />}
+        {/* ExpireSoon */}
+        {tab === 'expire-soon' && <ExpireSoon />} 
+        {/* Demand */}
+        {tab === 'high-demand' && <HighDemand />}
+        {/* Disposal */}
+        {tab === 'disposal' && <DisposalItem />}
+        {/* Show Disposal */}
+        {tab === 'show-disposal' && <DisposeDetails />} 
       </div>
     </div>
   )
