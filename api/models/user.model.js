@@ -23,17 +23,16 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-<<<<<<< Updated upstream
+
   position: {
     type: String,
     enum: [null, 'inventory_manager', 'supplier'], // null for regular users
     default: null
-=======
+  },
   role: {
     type: String,
     enum: ["user", "inventoryManager", "supplier"],
     default: "user"
->>>>>>> Stashed changes
   }
 }, { timestamps: true });
 
