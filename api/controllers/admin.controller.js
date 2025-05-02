@@ -3,6 +3,33 @@ import { errorHandler } from '../utils/error.js';
 
 const allowedRoles = ['inventoryManager', 'supplier'];
 
+// Add this new loginAdmin function
+export const loginAdmin = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    
+    if (!user || !user.isAdmin) {
+      return next(errorHandler(401, 'Invalid admin credentials'));
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return next(errorHandler(401, 'Invalid admin credentials'));
+    }
+
+    const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET);
+    const { password: pass, ...rest } = user._doc;
+    
+    res
+      .cookie('admin_token', token, { httpOnly: true })
+      .status(200)
+      .json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const assignRole = async (req, res, next) => {
   try {
     const roleToAssign = req.body.role?.toLowerCase();

@@ -1,56 +1,26 @@
 import jwt from 'jsonwebtoken';
+import { errorHandler } from '../utils/error.js';
 import User from '../models/user.model.js';
-import { protectAdmin } from '../middleware/authmiddleware';
 
-
-// Middleware to verify the user is authenticated
 export const protect = async (req, res, next) => {
-  let token;
-
-  // Check if Authorization header is present
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    try {
-      // Extract the token from the header
-      token = req.headers.authorization.split(' ')[1];
-
-      // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-      // Add the user information to the request (without the password)
-      req.user = await User.findById(decoded.id).select('-password');
-      
-      // Move to the next middleware or route handler
-      next();
-    } catch (error) {
-      console.error(error);
-      return res.status(401).json({ message: 'Not authorized, token failed' });
+  try {
+    const token = req.cookies.admin_token;
+    if (!token) {
+      return next(errorHandler(401, 'Not authorized, no token'));
     }
-  }
 
-  // If no token is provided
-  if (!token) {
-    return res.status(401).json({ message: 'Not authorized, no token' });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.id).select('-password');
+    next();
+  } catch (error) {
+    next(errorHandler(401, 'Not authorized, token failed'));
   }
 };
 
-export const protectAdmin = (req, res, next) => {
-  protect(req, res, () => {
-    if (req.user && req.user.isAdmin) {
-      next();
-    } else {
-      res.status(403).json({ message: 'Access denied, admin only' });
-    }
-  });
-};
-
-// Middleware to check if the user is an admin
 export const adminOnly = (req, res, next) => {
-  // Check if the user is an admin
   if (req.user && req.user.isAdmin) {
-    // If the user is an admin, allow access to the next middleware or route handler
     next();
   } else {
-    // If the user is not an admin, deny access
-    return res.status(403).json({ message: 'Access denied, admin only' });
+    return next(errorHandler(403, 'Not authorized as admin'));
   }
 };

@@ -3,7 +3,7 @@ import {
   assignRole,
   getUsers,
   loginAdmin
-} from '../controllers/adminController.js';
+} from '../controllers/admin.controller.js';
 import { protect, adminOnly } from '../middleware/authmiddleware.js';
 
 const router = express.Router();

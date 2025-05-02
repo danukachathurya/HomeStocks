@@ -6,9 +6,8 @@ import { signInSuccess, signInStart, signInFailure } from "../redux/user/userSli
 import OAuth from "../components/OAuth";
 
 export default function SignIn() {
-
   const [formData, setFormData] = useState({});
-  const {loading, error: errorMessage} = useSelector(state => state.user);
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -17,25 +16,34 @@ export default function SignIn() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // not refresh the form
+    e.preventDefault();
     if (!formData.email || !formData.password) {
       return dispatch(signInFailure("Please fill out all required fields"));
     }
+
     try {
       dispatch(signInStart());
-      const res = await fetch('/api/auth/signin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+
       const data = await res.json();
-      if (data.success === false) {
-        dispatch(signInFailure(data.message));
+
+      if (!res.ok || data.success === false) {
+        return dispatch(signInFailure(data.message || "Login failed"));
       }
-      if(res.ok) {
-        dispatch(signInSuccess(data));
-        navigate('/')
-      }
+
+      dispatch(signInSuccess(data));
+
+      // Redirect based on role
+      const role = data.role;
+      if (role === "admin") navigate("/admin");
+      else if (role === "inventoryManager") navigate("/inventory");
+      else if (role === "supplier") navigate("/supplier");
+      else navigate("/user"); // default user
+
     } catch (error) {
       dispatch(signInFailure(error.message));
     }
@@ -57,23 +65,36 @@ export default function SignIn() {
             or with Google.
           </p>
         </div>
+
         {/* right */}
         <div className="flex-1">
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <div>
               <Label value="Your email" />
-              <TextInput type="email" placeholder="name@company.com" id="email" onChange={handleChange} />
+              <TextInput
+                type="email"
+                placeholder="name@company.com"
+                id="email"
+                onChange={handleChange}
+              />
             </div>
             <div>
               <Label value="Your password" />
-              <TextInput type="password" placeholder="********" id="password" onChange={handleChange} />
+              <TextInput
+                type="password"
+                placeholder="********"
+                id="password"
+                onChange={handleChange}
+              />
             </div>
-            <Button gradientDuoTone='purpleToPink' type='submit'>
-              Sign In
+            <Button gradientDuoTone="purpleToPink" type="submit" disabled={loading}>
+              {loading ? "Loading..." : "Sign In"}
             </Button>
             <OAuth />
           </form>
+
           {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
+
           <div className="flex gap-2 text-sm mt-5">
             <span>Don't have an account?</span>
             <Link to="/sign-up" className="text-blue-500">
