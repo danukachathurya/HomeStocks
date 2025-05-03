@@ -9,6 +9,7 @@ import ExpireSoon from './ExpireSoon';
 import HighDemand from './HighDemand';
 import DisposalItem from './DisposalItems';
 import DisposeDetails from './DisposeDetails';
+import ExpiredProduct from './ExpiredProduct';
 
 export default function Dashboard() {
   const location = useLocation();
@@ -44,7 +45,9 @@ export default function Dashboard() {
         {/* Disposal */}
         {tab === 'disposal' && <DisposalItem />}
         {/* Show Disposal */}
-        {tab === 'show-disposal' && <DisposeDetails />} 
+        {tab === 'show-disposal' && <DisposeDetails />}
+        {/* Expired Products */}
+        {tab === 'expired-products' && <ExpiredProduct />} 
       </div>
     </div>
   )

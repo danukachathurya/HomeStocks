@@ -8,6 +8,7 @@ import {
   HiOutlineUserGroup,
   HiClock,
   HiUser,
+  HiOutlineBan,
   HiCube
 } from "react-icons/hi";
 import { useEffect, useState } from "react";
@@ -102,6 +103,15 @@ export default function DashSidebar() {
               as="div"
             >
               Expire Soon
+            </Sidebar.Item>
+          </Link>
+          <Link to="/dashboard?tab=expired-products">
+            <Sidebar.Item
+              active={tab === "expired-products"}
+              icon={HiOutlineBan}
+              as="div"
+            >
+              Expired Products
             </Sidebar.Item>
           </Link>
           <Link to="/dashboard?tab=high-demand">
