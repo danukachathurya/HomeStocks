@@ -7,6 +7,12 @@ import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+
+import AdminDashboard from './pages/AdminDashboard';
+import InventoryManagerDashboard from './pages/InventoryManagerDashboard';
+import SupplierDashboard from './pages/SupplierDashboard';
+import UserDashboard from './pages/UserDashboard';
+
 import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
 import ScrollToTop from "./components/ScrollToTop";
@@ -27,15 +33,31 @@ export default function App() {
         <Route path="/sign-in" element={<Signin />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/search" element={<Search />} />
-        <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Route>
-        <Route element={<OnlyAdminPrivateRoute />}>
-          <Route path="/add-product" element={<AddProduct />} />
-          <Route path="/products/:productId" element={<Product />} />
-          <Route path="/disposal" element={<DisposalItems />} />
-          <Route path="/show-dispose" element={<DisposeDetails />} />
-        </Route>
+        
+        <Route path="/admin" element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/inventory" element={
+          <ProtectedRoute allowedRoles={['inventoryManager']}>
+            <InventoryManagerDashboard />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/supplier" element={
+          <ProtectedRoute allowedRoles={['supplier']}>
+            <SupplierDashboard />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/user" element={
+          <ProtectedRoute allowedRoles={['user']}>
+            <UserDashboard />
+          </ProtectedRoute>
+        } />
+
         <Route path="*" element={<h1 className="text-center mt-10 text-3xl">404 - Page Not Found</h1>} />
       </Routes>
       <Footer />
