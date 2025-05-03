@@ -68,8 +68,9 @@ export default function AdminDashboard() {
           required
         >
           <option value="">-- Choose a role --</option>
-          <option value="inventory_manager">Inventory Manager</option>
+          <option value="inventorymanager">Inventory Manager</option>
           <option value="supplier">Supplier</option>
+          <option value="user">User</option>
         </Select>
       </div>
       <Button onClick={handleAssignRole} gradientDuoTone="purpleToPink">

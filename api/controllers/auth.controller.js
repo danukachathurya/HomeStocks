@@ -3,6 +3,15 @@ import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
+// Helper function to generate token
+const generateToken = (userId, isAdmin, role) => {
+  return jwt.sign(
+    { id: userId, isAdmin, role },
+    process.env.JWT_SECRET,
+    { expiresIn: '30d' } // optional: add token expiration
+  );
+};
+
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
 
@@ -14,7 +23,7 @@ export const signup = async (req, res, next) => {
     email === "" ||
     password === ""
   ) {
-    next(errorHandler(400, "All fields are required"));
+    return next(errorHandler(400, "All fields are required"));
   }
   const hashedPassword = bcryptjs.hashSync(password, 10);
 
@@ -22,11 +31,18 @@ export const signup = async (req, res, next) => {
     username,
     email,
     password: hashedPassword,
+    role: "user" // default role
   });
 
   try {
     await newUser.save();
-    res.json("Signup Successful");
+    res.status(201).json({
+      _id: newUser._id,
+      username: newUser.username,
+      email: newUser.email,
+      role: newUser.role,
+      token: generateToken(newUser._id, newUser.isAdmin, newUser.role)
+    });
   } catch (error) {
     next(error);
   }
@@ -36,36 +52,26 @@ export const signin = async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password || email === "" || password === "") {
-    next(errorHandler(400, "All fields are required"));
+    return next(errorHandler(400, "All fields are required"));
   }
 
   try {
-    const validUser = await User.findOne({ email });
-    if (!validUser) {
+    const user = await User.findOne({ email });
+    if (!user) {
       return next(errorHandler(404, "User not found"));
     }
-    const vaildPassword = bcryptjs.compareSync(password, validUser.password);
-    if (!vaildPassword) {
+    const validPassword = bcryptjs.compareSync(password, user.password);
+    if (!validPassword) {
       return next(errorHandler(400, "Invalid Password"));
     }
 
-    const token = jwt.sign(
-      {
-        id: validUser._id,
-        isAdmin: validUser.isAdmin,
-        role: validUser.role
-      },
-      process.env.JWT_SECRET
-    );
-
-    const { password: pass, ...rest } = validUser._doc;
-
-    res
-      .status(200)
-      .cookie("access_token", token, {
-        httpOnly: true,
-      })
-      .json({ ...rest, role: validUser.role });
+    res.status(200).json({
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id, user.isAdmin, user.role)
+    });
   } catch (error) {
     next(error);
   }
@@ -96,24 +102,15 @@ export const google = async (req, res, next) => {
       await user.save();
     }
 
-    const token = jwt.sign(
-      {
-        id: user._id,
-        isAdmin: user.isAdmin,
-        role: user.role,
-      },
-      process.env.JWT_SECRET,
-    );
-
-    const { password, ...userWithoutPassword } = user._doc;
-
     res.status(200).json({
-      token,
-      user: userWithoutPassword,
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id, user.isAdmin, user.role)
     });
 
   } catch (error) {
     next(error);
   }
 };
-

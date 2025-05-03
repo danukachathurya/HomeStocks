@@ -23,15 +23,9 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-
-  position: {
-    type: String,
-    enum: [null, 'inventory_manager', 'supplier'], // null for regular users
-    default: null
-  },
   role: {
     type: String,
-    enum: ["user", "inventoryManager", "supplier"],
+    enum: ["user", "inventorymanager", "supplier"],
     default: "user"
   }
 }, { timestamps: true });
