@@ -18,7 +18,7 @@ const roleTabs = {
     { key: "manageUsers", label: "Manage Users", icon: HiUserGroup },
     { key: "assignRoles", label: "Assign Roles", icon: HiUserAdd },
     { key: "profile", label: "Your Profile", icon: HiOutlineUserCircle },
-    { key: "settings", label: "Settings", icon: HiCog },
+    { key: "suppliersOrder", label: "Suppliers Order", icon: HiClipboardList }, 
   ],
   supplier: [
     { key: "overview", label: "Overview", icon: HiHome },

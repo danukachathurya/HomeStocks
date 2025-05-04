@@ -8,30 +8,34 @@ export default function ManageUsers() {
   const fetchUsers = async () => {
     try {
       const res = await fetch("/api/admin/get-users", {
-        credentials: "include", // 🔑 send admin_token cookie
+        credentials: "include",
       });
+
       const data = await res.json();
 
       if (!res.ok) {
         throw new Error(data.message || "Failed to fetch users.");
       }
 
-      setUsers(data.users); // because your controller sends { users: [...] }
+      setUsers(data.users || []); // ✅ Prevent undefined
     } catch (err) {
       setError(err.message);
+      setUsers([]); // ✅ Ensure empty array on error
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm("Are you sure you want to delete this user?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
     if (!confirmed) return;
 
     try {
       const res = await fetch(`/api/admin/delete-user/${id}`, {
         method: "DELETE",
-        credentials: "include", // 🔑 send cookie
+        credentials: "include",
       });
       const data = await res.json();
 
@@ -39,7 +43,6 @@ export default function ManageUsers() {
         throw new Error(data.message || "Failed to delete user.");
       }
 
-      // Remove deleted user from state
       setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
     } catch (err) {
       alert(err.message);
@@ -72,7 +75,7 @@ export default function ManageUsers() {
               <td className="py-2 px-4">{user.email}</td>
               <td className="py-2 px-4">{user.role}</td>
               <td className="py-2 px-4">
-                {user.isAdmin ? (
+                {user.role === "admin" ? (
                   <span className="text-gray-500">Cannot delete</span>
                 ) : (
                   <button

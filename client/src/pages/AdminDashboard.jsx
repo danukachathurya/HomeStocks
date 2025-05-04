@@ -74,9 +74,9 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {activeTab === "settings" && (
+        {activeTab === "suppliersOrder" && (
           <div>
-            <h2 className="text-xl font-semibold mb-2">Settings</h2>
+            <h2 className="text-xl font-semibold mb-2">Supplier Orders</h2>
             <p>Adjust application or account settings.</p>
             {/* Settings component goes here */}
           </div>

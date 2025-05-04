@@ -83,8 +83,8 @@ export const getUsers = async (req, res, next) => {
       return next(errorHandler(403, 'You are not allowed to see all users.'));
     }
 
-    const users = await User.find({}, 'username email role createdAt'); // select only necessary fields
-    res.status(200).json(users);
+    const users = await User.find({}, 'username email role createdAt');
+    res.status(200).json({ users }); // ✅ Correct format
   } catch (error) {
     next(error);
   }
