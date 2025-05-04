@@ -1,140 +1,73 @@
 import { Sidebar } from "flowbite-react";
 import {
-  HiAnnotation,
+  HiHome,
+  HiUserGroup,
+  HiOutlineUserCircle,
+  HiBookmark,
+  HiCube,
+  HiCog,
   HiArrowSmRight,
-  HiChartPie,
-  HiDocumentText,
-  HiOutlineUserGroup,
-  HiUser,
-  HiPlus
+  HiClipboardList,
 } from "react-icons/hi";
-import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { signoutSuccess } from "../redux/user/userSlice";
-import { useDispatch, useSelector } from "react-redux";
+import PropTypes from "prop-types";
 
-export default function DashSidebar() {
-  const location = useLocation();
-  const [tab, setTab] = useState("");
-  const dispatch = useDispatch();
-  const { currentUser } = useSelector((state) => state.user);
+const roleTabs = {
+  admin: [
+    { key: "overview", label: "Overview", icon: HiHome },
+    { key: "manageUsers", label: "Manage Users", icon: HiUserGroup },
+    { key: "assignRoles", label: "Assign Roles", icon: HiOutlineUserCircle },
+    { key: "settings", label: "Settings", icon: HiCog },
+  ],
+  supplier: [
+    { key: "overview", label: "Overview", icon: HiHome },
+    { key: "mySupplies", label: "My Supplies", icon: HiClipboardList },
+    { key: "profile", label: "Your Profile", icon: HiOutlineUserCircle },
+    { key: "settings", label: "Settings", icon: HiCog },
+  ],
+  inventoryManager: [
+    { key: "overview", label: "Overview", icon: HiHome },
+    { key: "inventory", label: "Inventory", icon: HiCube },
+    { key: "profile", label: "Your Profile", icon: HiOutlineUserCircle },
+    { key: "settings", label: "Settings", icon: HiCog },
+  ],
+  user: [
+    { key: "overview", label: "Overview", icon: HiHome },
+    { key: "myItems", label: "My Items", icon: HiBookmark },
+    { key: "profile", label: "Your Profile", icon: HiOutlineUserCircle },
+    { key: "settings", label: "Settings", icon: HiCog },
+  ],
+};
 
-  useEffect(() => {
-    const urlParams = new URLSearchParams(location.search);
-    const tabFromUrl = urlParams.get("tab");
-    if (tabFromUrl) {
-      setTab(tabFromUrl);
-    }
-  }, [location.search]);
-
-  const handleSignout = async () => {
-    try {
-      const res = await fetch("api/user/signout", {
-        method: "POST",
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        console.log(data.message);
-      } else {
-        dispatch(signoutSuccess());
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const role = currentUser?.role?.toLowerCase(); // Normalize for comparison
+export default function DashSidebar({ role, activeTab, setActiveTab, onSignOut }) {
+  const tabs = roleTabs[role] || [];
 
   return (
-    <Sidebar className="w-full md:w-56">
+    <Sidebar aria-label="Dashboard Sidebar" className="w-64">
       <Sidebar.Items>
-        <Sidebar.ItemGroup className="flex flex-col gap-1">
-
-          {/* Admin only */}
-          {role === 'admin' && (
-            <>
-              <Link to="/dashboard?tab=dash">
-                <Sidebar.Item
-                  active={tab === "dash" || !tab}
-                  icon={HiChartPie}
-                  as="div"
-                >
-                  Dashboard
-                </Sidebar.Item>
-              </Link>
-
-              <Link to="/dashboard?tab=users">
-                <Sidebar.Item
-                  active={tab === "users"}
-                  icon={HiOutlineUserGroup}
-                  as="div"
-                >
-                  Manage Users
-                </Sidebar.Item>
-              </Link>
-            </>
-          )}
-
-          {/* Supplier only */}
-          {role === 'supplier' && (
-            <Link to="/dashboard?tab=supplier-products">
-              <Sidebar.Item
-                active={tab === "supplier-products"}
-                icon={HiDocumentText}
-                as="div"
-              >
-                Supplier Products
-              </Sidebar.Item>
-            </Link>
-          )}
-
-          {/* Inventory Manager only */}
-          {role === 'inventory manager' && (
-            <Link to="/dashboard?tab=inventory">
-              <Sidebar.Item
-                active={tab === "inventory"}
-                icon={HiAnnotation}
-                as="div"
-              >
-                Inventory
-              </Sidebar.Item>
-            </Link>
-          )}
-
-          {/* Shared across all roles */}
-          <Link to="/dashboard?tab=profile">
+        <Sidebar.ItemGroup>
+          {tabs.map((tab) => (
             <Sidebar.Item
-              active={tab === "profile"}
-              icon={HiUser}
-              label={role ? role.charAt(0).toUpperCase() + role.slice(1) : "User"}
-              labelColor="dark"
+              key={tab.key}
+              icon={tab.icon}
               as="div"
+              onClick={() => setActiveTab(tab.key)}
+              className={activeTab === tab.key ? "bg-gray-200 dark:bg-gray-700" : ""}
             >
-              Profile
+              {tab.label}
             </Sidebar.Item>
-          </Link>
-
-          <Link to="/dashboard?tab=products">
-            <Sidebar.Item
-              active={tab === "products"}
-              icon={HiPlus}
-              as="div"
-            >
-              Products
-            </Sidebar.Item>
-          </Link>
-
-          {/* Sign out */}
-          <Sidebar.Item
-            icon={HiArrowSmRight}
-            className="cursor-pointer"
-            onClick={handleSignout}
-          >
+          ))}
+          <Sidebar.Item icon={HiArrowSmRight} onClick={onSignOut}>
             Sign Out
           </Sidebar.Item>
-
         </Sidebar.ItemGroup>
       </Sidebar.Items>
     </Sidebar>
   );
 }
+
+DashSidebar.propTypes = {
+  role: PropTypes.string.isRequired,
+  activeTab: PropTypes.string.isRequired,
+  setActiveTab: PropTypes.func.isRequired,
+  onSignOut: PropTypes.func.isRequired,
+};

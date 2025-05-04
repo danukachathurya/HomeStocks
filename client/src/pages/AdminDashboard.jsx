@@ -1,81 +1,118 @@
 import { useEffect, useState } from "react";
-import { Button, Label, Select, TextInput } from "flowbite-react";
+import { Sidebar } from "flowbite-react";
+import {
+  HiHome,
+  HiUserAdd,
+  HiUserGroup,
+  HiOutlineUserCircle,
+  HiArrowSmRight,
+} from "react-icons/hi";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { signoutSuccess } from "../redux/user/userSlice";
 
 export default function AdminDashboard() {
-  const [users, setUsers] = useState([]);
-  const [selectedRole, setSelectedRole] = useState('');
-  const [selectedUserId, setSelectedUserId] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { currentUser } = useSelector((state) => state.user);
+  const [activeTab, setActiveTab] = useState("overview");
 
-  useEffect(() => {
-    // Fetch all users
-    const fetchUsers = async () => {
-      const token = localStorage.getItem("token");
-      const res = await fetch("/api/admin/users", {
-        headers: { Authorization: `Bearer ${token}` },
+  const handleSignOut = async () => {
+    try {
+      const res = await fetch("/api/user/signout", {
+        method: "POST",
       });
       const data = await res.json();
-      setUsers(data);
-    };
-
-    fetchUsers();
-  }, []);
-
-  const handleAssignRole = async () => {
-    if (!selectedUserId || !selectedRole) return;
-
-    const token = localStorage.getItem("token");
-
-    const res = await fetch(`/api/admin/assign-role`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ userId: selectedUserId, role: selectedRole }),
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      alert("Role assigned successfully!");
-    } else {
-      alert(data.message || "Failed to assign role.");
+      if (!res.ok) {
+        console.log(data.message || "Sign out failed");
+      } else {
+        dispatch(signoutSuccess());
+        navigate("/sign-in");
+      }
+    } catch (error) {
+      console.error("Error signing out:", error.message);
     }
   };
 
   return (
-    <div className="p-5 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
-      <div className="mb-4">
-        <Label htmlFor="user">Select User</Label>
-        <Select
-          id="user"
-          onChange={(e) => setSelectedUserId(e.target.value)}
-          required
-        >
-          <option value="">-- Choose a user --</option>
-          {users.map((user) => (
-            <option key={user._id} value={user._id}>
-              {user.email} ({user.role || "No Role"})
-            </option>
-          ))}
-        </Select>
+    <div className="flex min-h-screen">
+      {/* Sidebar */}
+      <Sidebar aria-label="Admin Sidebar" className="w-64">
+        <Sidebar.Items>
+          <Sidebar.ItemGroup>
+            <Sidebar.Item
+              icon={HiHome}
+              as="div"
+              onClick={() => setActiveTab("overview")}
+              className={activeTab === "overview" ? "bg-gray-200 dark:bg-gray-700" : ""}
+            >
+              Overview
+            </Sidebar.Item>
+            <Sidebar.Item
+              icon={HiUserAdd}
+              as="div"
+              onClick={() => setActiveTab("assignRoles")}
+              className={activeTab === "assignRoles" ? "bg-gray-200 dark:bg-gray-700" : ""}
+            >
+              Assign Roles
+            </Sidebar.Item>
+            <Sidebar.Item
+              icon={HiUserGroup}
+              as="div"
+              onClick={() => setActiveTab("manageUsers")}
+              className={activeTab === "manageUsers" ? "bg-gray-200 dark:bg-gray-700" : ""}
+            >
+              Manage Users
+            </Sidebar.Item>
+            <Sidebar.Item
+              icon={HiOutlineUserCircle}
+              as="div"
+              onClick={() => setActiveTab("profile")}
+              className={activeTab === "profile" ? "bg-gray-200 dark:bg-gray-700" : ""}
+            >
+              Your Profile
+            </Sidebar.Item>
+            <Sidebar.Item icon={HiArrowSmRight} onClick={handleSignOut}>
+              Sign Out
+            </Sidebar.Item>
+          </Sidebar.ItemGroup>
+        </Sidebar.Items>
+      </Sidebar>
+
+      {/* Main Content */}
+      <div className="flex-1 p-5">
+        <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+
+        {activeTab === "overview" && (
+          <p className="text-gray-700">
+            Hello <strong>{currentUser?.username}</strong>! Welcome to your admin dashboard.
+          </p>
+        )}
+
+        {activeTab === "assignRoles" && (
+          <div>
+            <h2 className="text-xl font-semibold mb-2">Assign Roles</h2>
+            <p>Assign Inventory Manager or Supplier roles to users.</p>
+            {/* Include your role assignment logic or component here */}
+          </div>
+        )}
+
+        {activeTab === "manageUsers" && (
+          <div>
+            <h2 className="text-xl font-semibold mb-2">Manage Users</h2>
+            <p>View, edit, or delete user accounts.</p>
+            {/* Include your user management logic or component here */}
+          </div>
+        )}
+
+        {activeTab === "profile" && (
+          <div>
+            <h2 className="text-xl font-semibold mb-2">Your Profile</h2>
+            <p>Manage your profile and preferences.</p>
+            {/* Add admin profile management logic here */}
+          </div>
+        )}
       </div>
-      <div className="mb-4">
-        <Label htmlFor="role">Select Role</Label>
-        <Select
-          id="role"
-          onChange={(e) => setSelectedRole(e.target.value)}
-          required
-        >
-          <option value="">-- Choose a role --</option>
-          <option value="inventorymanager">Inventory Manager</option>
-          <option value="supplier">Supplier</option>
-          <option value="user">User</option>
-        </Select>
-      </div>
-      <Button onClick={handleAssignRole} gradientDuoTone="purpleToPink">
-        Assign Role
-      </Button>
     </div>
   );
 }
