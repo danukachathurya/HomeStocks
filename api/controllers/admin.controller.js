@@ -49,20 +49,21 @@ export const loginAdmin = async (req, res, next) => {
 // Assign Role to a User
 export const assignRole = async (req, res, next) => {
   try {
+    const email = req.body.email?.trim().toLowerCase();
     const roleToAssign = req.body.role?.trim().toLowerCase();
-    const userId = req.params.userId;
 
-    if (!userId || !roleToAssign) {
-      return next(errorHandler(400, 'User ID and role are required.'));
+    if (!email || !roleToAssign) {
+      return next(errorHandler(400, 'Email and role are required.'));
     }
 
     if (!allowedRoles.includes(roleToAssign)) {
       return next(errorHandler(400, 'Invalid role assignment.'));
     }
 
-    const user = await User.findById(userId);
+    const user = await User.findOne({ email });
+
     if (!user) {
-      return next(errorHandler(404, 'User not found.'));
+      return next(errorHandler(404, 'User not found with the given email.'));
     }
 
     user.role = roleToAssign;
@@ -82,34 +83,29 @@ export const getUsers = async (req, res, next) => {
       return next(errorHandler(403, 'You are not allowed to see all users.'));
     }
 
-    const startIndex = parseInt(req.query.startIndex) || 0;
-    const limit = parseInt(req.query.limit) || 9;
-    const sortDirection = req.query.sort === 'asc' ? 1 : -1;
+    const users = await User.find({}, 'username email role createdAt'); // select only necessary fields
+    res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
+};
 
-    const users = await User.find()
-      .sort({ createdAt: sortDirection })
-      .skip(startIndex)
-      .limit(limit);
+// Delete User (Admin only, can't delete admin users)
+export const deleteUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
 
-    const usersWithoutPassword = users.map((user) => {
-      const { password, ...rest } = user._doc;
-      return rest;
-    });
+    if (!user) {
+      return next(errorHandler(404, 'User not found.'));
+    }
 
-    const totalUsers = await User.countDocuments();
+    if (user.isAdmin || user.role === 'admin') {
+      return next(errorHandler(403, 'Cannot delete another admin user.'));
+    }
 
-    const now = new Date();
-    const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+    await User.findByIdAndDelete(req.params.id);
 
-    const lastMonthUsers = await User.countDocuments({
-      createdAt: { $gte: oneMonthAgo },
-    });
-
-    res.status(200).json({
-      users: usersWithoutPassword,
-      totalUsers,
-      lastMonthUsers,
-    });
+    res.status(200).json({ message: 'User deleted successfully.' });
   } catch (error) {
     next(error);
   }

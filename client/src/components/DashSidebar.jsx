@@ -8,6 +8,7 @@ import {
   HiCog,
   HiArrowSmRight,
   HiClipboardList,
+  HiUserAdd,
 } from "react-icons/hi";
 import PropTypes from "prop-types";
 
@@ -15,7 +16,8 @@ const roleTabs = {
   admin: [
     { key: "overview", label: "Overview", icon: HiHome },
     { key: "manageUsers", label: "Manage Users", icon: HiUserGroup },
-    { key: "assignRoles", label: "Assign Roles", icon: HiOutlineUserCircle },
+    { key: "assignRoles", label: "Assign Roles", icon: HiUserAdd },
+    { key: "profile", label: "Your Profile", icon: HiOutlineUserCircle },
     { key: "settings", label: "Settings", icon: HiCog },
   ],
   supplier: [

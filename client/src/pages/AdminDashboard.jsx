@@ -1,15 +1,11 @@
-import { useEffect, useState } from "react";
-import { Sidebar } from "flowbite-react";
-import {
-  HiHome,
-  HiUserAdd,
-  HiUserGroup,
-  HiOutlineUserCircle,
-  HiArrowSmRight,
-} from "react-icons/hi";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { signoutSuccess } from "../redux/user/userSlice";
+import DashSidebar from "../components/DashSidebar"; // Update path based on your structure
+import AdminPosition from "./AdminPosition";
+import ManageUsers from "./ManageUsers"; // Update path based on your structure
+
 
 export default function AdminDashboard() {
   const dispatch = useDispatch();
@@ -37,47 +33,12 @@ export default function AdminDashboard() {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <Sidebar aria-label="Admin Sidebar" className="w-64">
-        <Sidebar.Items>
-          <Sidebar.ItemGroup>
-            <Sidebar.Item
-              icon={HiHome}
-              as="div"
-              onClick={() => setActiveTab("overview")}
-              className={activeTab === "overview" ? "bg-gray-200 dark:bg-gray-700" : ""}
-            >
-              Overview
-            </Sidebar.Item>
-            <Sidebar.Item
-              icon={HiUserAdd}
-              as="div"
-              onClick={() => setActiveTab("assignRoles")}
-              className={activeTab === "assignRoles" ? "bg-gray-200 dark:bg-gray-700" : ""}
-            >
-              Assign Roles
-            </Sidebar.Item>
-            <Sidebar.Item
-              icon={HiUserGroup}
-              as="div"
-              onClick={() => setActiveTab("manageUsers")}
-              className={activeTab === "manageUsers" ? "bg-gray-200 dark:bg-gray-700" : ""}
-            >
-              Manage Users
-            </Sidebar.Item>
-            <Sidebar.Item
-              icon={HiOutlineUserCircle}
-              as="div"
-              onClick={() => setActiveTab("profile")}
-              className={activeTab === "profile" ? "bg-gray-200 dark:bg-gray-700" : ""}
-            >
-              Your Profile
-            </Sidebar.Item>
-            <Sidebar.Item icon={HiArrowSmRight} onClick={handleSignOut}>
-              Sign Out
-            </Sidebar.Item>
-          </Sidebar.ItemGroup>
-        </Sidebar.Items>
-      </Sidebar>
+      <DashSidebar
+        role="admin"
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onSignOut={handleSignOut}
+      />
 
       {/* Main Content */}
       <div className="flex-1 p-5">
@@ -93,7 +54,7 @@ export default function AdminDashboard() {
           <div>
             <h2 className="text-xl font-semibold mb-2">Assign Roles</h2>
             <p>Assign Inventory Manager or Supplier roles to users.</p>
-            {/* Include your role assignment logic or component here */}
+            <AdminPosition />
           </div>
         )}
 
@@ -101,7 +62,7 @@ export default function AdminDashboard() {
           <div>
             <h2 className="text-xl font-semibold mb-2">Manage Users</h2>
             <p>View, edit, or delete user accounts.</p>
-            {/* Include your user management logic or component here */}
+            <ManageUsers />
           </div>
         )}
 
@@ -109,7 +70,15 @@ export default function AdminDashboard() {
           <div>
             <h2 className="text-xl font-semibold mb-2">Your Profile</h2>
             <p>Manage your profile and preferences.</p>
-            {/* Add admin profile management logic here */}
+            {/* Profile management component goes here */}
+          </div>
+        )}
+
+        {activeTab === "settings" && (
+          <div>
+            <h2 className="text-xl font-semibold mb-2">Settings</h2>
+            <p>Adjust application or account settings.</p>
+            {/* Settings component goes here */}
           </div>
         )}
       </div>
