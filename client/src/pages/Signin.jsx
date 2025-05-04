@@ -21,38 +21,51 @@ export default function SignIn() {
       return dispatch(signInFailure("Please fill out all required fields"));
     }
 
+    dispatch(signInStart());
+
     try {
-      dispatch(signInStart());
-      const res = await fetch("/api/auth/signin", {
+      // Attempt admin login first
+      let res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // IMPORTANT: sends cookie
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json();
+      let data = await res.json();
 
+      // If admin login fails, try regular user login
       if (!res.ok || data.success === false) {
-        return dispatch(signInFailure(data.message || "Login failed"));
+        res = await fetch("/api/auth/signin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include", // IMPORTANT: sends cookie
+          body: JSON.stringify(formData),
+        });
+
+        data = await res.json();
+        if (!res.ok || data.success === false) {
+          return dispatch(signInFailure(data.message || "Login failed"));
+        }
       }
 
       dispatch(signInSuccess(data));
 
-      // Redirect based on role
-      const role = data.role;
-      if (role === "admin") navigate("/admin");
-      else if (role === "inventoryManager") navigate("/inventory");
-      else if (role === "supplier") navigate("/supplier");
-      else navigate("/user"); // default user
+      // Route based on role or admin
+      if (data.isAdmin === true) navigate("/admin-dashboard");
+      else if (data.role === "inventorymanager") navigate("/inventory-dashboard");
+      else if (data.role === "supplier") navigate("/supplier-dashboard");
+      else navigate("/user-dashboard");
 
     } catch (error) {
-      dispatch(signInFailure(error.message));
+      dispatch(signInFailure("Login failed. Please try again."));
     }
   };
 
   return (
     <div className="min-h-screen mt-20">
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
-        {/* left */}
+        {/* Left */}
         <div className="flex-1">
           <Link to="/" className="font-bold dark:text-white text-4xl">
             <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white">
@@ -66,7 +79,7 @@ export default function SignIn() {
           </p>
         </div>
 
-        {/* right */}
+        {/* Right */}
         <div className="flex-1">
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <div>
