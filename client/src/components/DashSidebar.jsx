@@ -1,12 +1,15 @@
 import { Sidebar } from "flowbite-react";
 import {
-  HiAnnotation,
+  HiTrash,
+  HiEye,
   HiArrowSmRight,
   HiChartPie,
-  HiDocumentText,
+  HiTrendingUp,
   HiOutlineUserGroup,
+  HiClock,
   HiUser,
-  HiPlus
+  HiOutlineBan,
+  HiCube
 } from "react-icons/hi";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -87,10 +90,55 @@ export default function DashSidebar() {
           <Link to="/dashboard?tab=products">
             <Sidebar.Item
               active={tab === "products"}
-              icon={HiPlus}
+              icon={HiCube}
               as="div"
             >
               Products
+            </Sidebar.Item>
+          </Link>
+          <Link to="/dashboard?tab=expire-soon">
+            <Sidebar.Item
+              active={tab === "expire-soon"}
+              icon={HiClock}
+              as="div"
+            >
+              Expire Soon
+            </Sidebar.Item>
+          </Link>
+          <Link to="/dashboard?tab=expired-products">
+            <Sidebar.Item
+              active={tab === "expired-products"}
+              icon={HiOutlineBan}
+              as="div"
+            >
+              Expired Products
+            </Sidebar.Item>
+          </Link>
+          <Link to="/dashboard?tab=high-demand">
+            <Sidebar.Item
+              active={tab === "high-demand"}
+              icon={HiTrendingUp}
+              as="div"
+            >
+              Demand Products
+            </Sidebar.Item>
+          </Link>
+          <Link to="/dashboard?tab=disposal">
+            <Sidebar.Item
+              active={tab === "disposal"}
+              icon={HiTrash}
+              as="div"
+            >
+              Disposal Products
+            </Sidebar.Item>
+          </Link>
+          <Link to="/dashboard?tab=show-disposal">
+            <Sidebar.Item
+              active={tab === "show-disposal"}
+              icon={HiEye}
+              as="div"
+            >
+              Show Disposal
             </Sidebar.Item>
           </Link>
 

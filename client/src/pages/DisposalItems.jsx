@@ -112,12 +112,6 @@ export default function DisposalItem() {
 
         <Button type="submit" className="block mx-auto">Dispose</Button>
       </form>
-      <Button
-        className="block mx-auto mt-2"
-        onClick={() => navigate("/show-dispose")}
-      >
-        Show Dispose Items
-      </Button>
     </div>
   );
 }

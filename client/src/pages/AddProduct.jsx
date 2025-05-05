@@ -160,7 +160,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               }))
             }
           />
-          <Label htmlFor="category" value="Category" />
+          <Label htmlFor="Supplier Name" value="Supplier Name" />
           <TextInput
             placeholder="Supplier Name"
             onChange={(e) =>
@@ -170,7 +170,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               }))
             }
           />
-          <Label htmlFor="category" value="Category" />
+          <Label htmlFor="Item Name" value="Item Name" />
           <TextInput
             placeholder="Item Name"
             onChange={(e) =>
