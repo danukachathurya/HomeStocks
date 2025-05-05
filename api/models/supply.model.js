@@ -39,7 +39,7 @@ const supplySchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    itemCode: [{ type: String, required: true }],itemCode: [{ type: String, required: true }],
+    itemCode: [{ type: String, required: true }],
   },
   { timestamps: true }
 );

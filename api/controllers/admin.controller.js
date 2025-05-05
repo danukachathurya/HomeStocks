@@ -125,3 +125,33 @@ export const getAllSupplies = async (req, res, next) => {
     next(error);
   }
 };
+
+// Admin adds supply item to system
+export const addToInventory = async (req, res, next) => {
+  try {
+    const { supplyId } = req.params;
+    const { quantity } = req.body;
+
+    const supplyItem = await Supply.findById(supplyId);
+    if (!supplyItem) return next(errorHandler(404, "Supply item not found."));
+
+    const finalQty = Number(quantity);
+    if (!finalQty || finalQty < 1 || finalQty > supplyItem.quantity) {
+      return next(errorHandler(400, "Invalid quantity provided."));
+    }
+
+    const existing = await Inventory.findOne({ itemCode: { $in: supplyItem.itemCode } });
+    if (existing) return next(errorHandler(409, "Item already in inventory."));
+
+    const newItem = new Inventory({
+      ...supplyItem._doc,
+      quantity: finalQty,
+    });
+
+    await newItem.save();
+
+    res.status(201).json({ message: "Item added to inventory with selected quantity." });
+  } catch (err) {
+    next(err);
+  }
+};

@@ -7,6 +7,7 @@ import {
 } from '../controllers/admin.controller.js';
 import { protect, adminOnly } from '../middleware/authmiddleware.js';
 import { getAllSupplies } from "../controllers/admin.controller.js";
+import { addToInventory } from "../controllers/admin.controller.js";
 
 const router = express.Router();
 
@@ -28,5 +29,7 @@ router.get('/get-users', protect, adminOnly, getUsers);
 router.delete('/delete-user/:id', protect, adminOnly, deleteUser);
 
 router.get("/supplier-orders", protect, adminOnly, getAllSupplies);
+
+router.post("/add-to-system/:supplyId", protect, adminOnly, addToInventory);
 
 export default router;
