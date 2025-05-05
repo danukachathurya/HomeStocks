@@ -5,6 +5,7 @@ import { signoutSuccess } from "../redux/user/userSlice";
 import DashSidebar from "../components/DashSidebar"; // Update path based on your structure
 import AdminPosition from "./AdminPosition";
 import ManageUsers from "./ManageUsers"; // Update path based on your structure
+import AdminSuppliersOrder from "./AdminSuppliersOrder"; 
 
 
 export default function AdminDashboard() {
@@ -70,7 +71,7 @@ export default function AdminDashboard() {
           <div>
             <h2 className="text-xl font-semibold mb-2">Your Profile</h2>
             <p>Manage your profile and preferences.</p>
-            {/* Profile management component goes here */}
+            
           </div>
         )}
 
@@ -78,7 +79,7 @@ export default function AdminDashboard() {
           <div>
             <h2 className="text-xl font-semibold mb-2">Supplier Orders</h2>
             <p>Adjust application or account settings.</p>
-            {/* Settings component goes here */}
+            <AdminSuppliersOrder />
           </div>
         )}
       </div>

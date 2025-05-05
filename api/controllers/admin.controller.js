@@ -2,6 +2,8 @@ import User from '../models/user.model.js';
 import { errorHandler } from '../utils/error.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import Supply from "../models/supply.model.js";
+import Inventory from "../models/inventory.model.js";
 
 const allowedRoles = ['inventorymanager', 'supplier', 'user'];
 
@@ -106,6 +108,19 @@ export const deleteUser = async (req, res, next) => {
     await User.findByIdAndDelete(req.params.id);
 
     res.status(200).json({ message: 'User deleted successfully.' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllSupplies = async (req, res, next) => {
+  try {
+    if (!req.user?.isAdmin) {
+      return next(errorHandler(403, "Only admins can view supplier orders."));
+    }
+
+    const supplies = await Supply.find().sort({ createdAt: -1 }); // newest first
+    res.status(200).json({ supplies });
   } catch (error) {
     next(error);
   }
