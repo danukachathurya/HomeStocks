@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
+import adminRoutes from "./routes/admin.route.js";
 import productRoutes from "./routes/product.route.js"; 
 import disposalRoutes from "./routes/disposal.route.js"; 
 import cookieParser from 'cookie-parser';
@@ -31,6 +32,7 @@ app.listen(3000, () => {
 
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/product', productRoutes);
 app.use('/api/disposal', disposalRoutes);
 
