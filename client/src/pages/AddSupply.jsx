@@ -5,10 +5,8 @@ import {
   FileInput,
   Datepicker,
   Alert,
-  Label,
 } from "flowbite-react";
 import { useState, useRef } from "react";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import {
   getStorage,
@@ -20,16 +18,14 @@ import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
-export default function AddProduct({ openModal, setOpenModal, onProductAdded }) {
+export default function AddSupply({ openModal, setOpenModal, onSupplyAdded }) {
   const [file, setFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(null);
   const [uploadError, setUploadError] = useState(null);
   const [formData, setFormData] = useState({});
-  const [itemCodeStart, setItemCodeStart] = useState("");
-  const [itemCodeEnd, setItemCodeEnd] = useState("");
   const [submitError, setSubmitError] = useState(null);
-  const quillRef = useRef();
 
+  // Validate the form inputs
   const validateForm = () => {
     const requiredFields = [
       "category",
@@ -40,45 +36,26 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
       "quantity",
       "purchaseDate",
       "expiryDate",
-      "description",
     ];
-  
+
     for (let field of requiredFields) {
       if (!formData[field] || formData[field].toString().trim() === "") {
         return `All fields are required.`;
       }
     }
-  
+
     if (isNaN(formData.price) || parseFloat(formData.price) <= 0) {
-      return "Price must be a number.";
+      return "Price must be a valid number greater than 0.";
     }
-  
+
     if (!Number.isInteger(Number(formData.quantity)) || formData.quantity <= 0) {
-      return "Quantity must be a positive number.";
+      return "Quantity must be a valid integer greater than 0.";
     }
-  
-    if (
-      !Number.isInteger(Number(itemCodeStart)) ||
-      !Number.isInteger(Number(itemCodeEnd)) ||
-      itemCodeStart <= 0 ||
-      itemCodeEnd <= 0
-    ) {
-      return "Item code start and end must be valid numbers.";
-    }
-  
-    if (parseInt(itemCodeStart) > parseInt(itemCodeEnd)) {
-      return "Item code start must be less than or equal to item code end.";
-    }
-  
-    const itemCodeCount = parseInt(itemCodeEnd) - parseInt(itemCodeStart) + 1;
-    if (itemCodeCount !== parseInt(formData.quantity)) {
-      return `Item code range size (${itemCodeCount}) must match quantity (${formData.quantity}).`;
-    }
-  
+
     return null;
   };
-  
 
+  // Handle image upload to Firebase Storage
   const handleImageUpload = () => {
     if (!file) {
       setUploadError("Please select an image.");
@@ -93,8 +70,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
     uploadTask.on(
       "state_changed",
       (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setUploadProgress(progress.toFixed(0));
       },
       () => {
@@ -111,6 +87,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
     );
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationError = validateForm();
@@ -119,18 +96,11 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
       return;
     }
 
-    const itemCodeArray = Array.from(
-      { length: itemCodeEnd - itemCodeStart + 1 },
-      (_, i) => (parseInt(itemCodeStart) + i).toString()
-    );
-
-    const finalData = { ...formData, itemCode: itemCodeArray };
-
     try {
-      const res = await fetch("/api/product/add", {
+      const res = await fetch("/api/supply/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(finalData),
+        body: JSON.stringify(formData), // Send form data to backend
       });
       const data = await res.json();
       if (!res.ok) {
@@ -138,8 +108,8 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
         return;
       }
       setSubmitError(null);
-      onProductAdded();
-      setOpenModal(false);
+      onSupplyAdded(); // Call the callback when supply is added
+      setOpenModal(false); // Close modal after submission
     } catch {
       setSubmitError("Something went wrong. Please try again.");
     }
@@ -147,10 +117,10 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
 
   return (
     <Modal show={openModal} onClose={() => setOpenModal(false)}>
-      <Modal.Header>Add Product</Modal.Header>
+      <Modal.Header>Add Supply</Modal.Header>
       <Modal.Body>
         <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
-          <Label htmlFor="category" value="Category" />
+          {/* Category Input */}
           <TextInput
             placeholder="Category"
             onChange={(e) =>
@@ -160,7 +130,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               }))
             }
           />
-          <Label htmlFor="Supplier Name" value="Supplier Name" />
+          {/* Supplier Name Input */}
           <TextInput
             placeholder="Supplier Name"
             onChange={(e) =>
@@ -170,7 +140,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               }))
             }
           />
-          <Label htmlFor="Item Name" value="Item Name" />
+          {/* Item Name Input */}
           <TextInput
             placeholder="Item Name"
             onChange={(e) =>
@@ -180,7 +150,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               }))
             }
           />
-          <Label htmlFor="Price" value="Price" />
+          {/* Price Input */}
           <TextInput
             placeholder="Price"
             onChange={(e) =>
@@ -190,7 +160,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               }))
             }
           />
-          <Label htmlFor="Add Image" value="Add Image" />
+          {/* Image Upload Section */}
           <div className="flex gap-2 items-center">
             <FileInput
               accept="image/*"
@@ -215,7 +185,9 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               )}
             </Button>
           </div>
+          {/* Display upload error */}
           {uploadError && <Alert color="failure">{uploadError}</Alert>}
+          {/* Display uploaded image */}
           {formData.itemImage && (
             <img
               src={formData.itemImage}
@@ -223,7 +195,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               className="h-32 object-cover mt-2"
             />
           )}
-          <Label htmlFor="Quantity" value="Quantity" />
+          {/* Quantity Input */}
           <TextInput
             placeholder="Quantity"
             onChange={(e) =>
@@ -233,19 +205,8 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               }))
             }
           />
-          <Label htmlFor="Item Code" value="Item Code" />
+          {/* Datepickers for purchase and expiry dates */}
           <div className="flex gap-2">
-            <TextInput
-              placeholder="Item Code Start"
-              onChange={(e) => setItemCodeStart(e.target.value)}
-            />
-            <TextInput
-              placeholder="Item Code End"
-              onChange={(e) => setItemCodeEnd(e.target.value)}
-            />
-          </div>
-          <div className="flex gap-2">
-            <Label htmlFor="Purchase Date" value="Purchase Date" />
             <Datepicker
               placeholder="Purchase Date"
               onSelectedDateChanged={(date) =>
@@ -255,7 +216,6 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
                 }))
               }
             />
-            <Label htmlFor="Expiry Date" value="Expiry Date" />
             <Datepicker
               placeholder="Expiry Date"
               onSelectedDateChanged={(date) =>
@@ -266,21 +226,11 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
               }
             />
           </div>
-          <Label htmlFor="Description" value="Description" />
-          <ReactQuill
-            ref={quillRef}
-            theme="snow"
-            placeholder="Product Description"
-            onChange={(value) =>
-              setFormData((prevData) => ({
-                ...prevData,
-                description: value,
-              }))
-            }
-          />
+          {/* Submit Button */}
           <Button type="submit" gradientDuoTone="greenToBlue">
-            Add Product
+            Add Supply
           </Button>
+          {/* Display submit error */}
           {submitError && <Alert color="failure">{submitError}</Alert>}
         </form>
       </Modal.Body>
