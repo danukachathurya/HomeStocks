@@ -8,8 +8,8 @@ import {
   Label,
 } from "flowbite-react";
 import { useState, useRef } from "react";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill";
 import {
   getStorage,
   ref,

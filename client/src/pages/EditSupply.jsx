@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button, TextInput, Modal, Alert, FileInput, Datepicker } from 'flowbite-react';
-import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
