@@ -78,7 +78,6 @@ export default function AdminDashboard() {
         {activeTab === "suppliersOrder" && (
           <div>
             <h2 className="text-xl font-semibold mb-2">Supplier Orders</h2>
-            <p>Adjust application or account settings.</p>
             <AdminSuppliersOrder />
           </div>
         )}
