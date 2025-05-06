@@ -140,18 +140,49 @@ export const addToInventory = async (req, res, next) => {
       return next(errorHandler(400, "Invalid quantity provided."));
     }
 
-    const existing = await Inventory.findOne({ itemCode: { $in: supplyItem.itemCode } });
-    if (existing) return next(errorHandler(409, "Item already in inventory."));
+    // Destructure needed fields for comparison
+    const { itemName, supplierName, category } = supplyItem;
 
-    const newItem = new Inventory({
-      ...supplyItem._doc,
-      quantity: finalQty,
+    // Check for existing item with exact match on name, supplier, and category
+    const existingInventory = await Inventory.findOne({
+      itemName,
+      supplierName,
+      category,
     });
 
-    await newItem.save();
+    if (existingInventory) {
+      // Update quantity only
+      existingInventory.quantity += finalQty;
+      await existingInventory.save();
+    } else {
+      // Remove _id and save as new inventory item
+      const supplyData = supplyItem.toObject();
+      delete supplyData._id;
+      delete supplyData.__v;
 
-    res.status(201).json({ message: "Item added to inventory with selected quantity." });
+      const newItem = new Inventory({
+        ...supplyData,
+        quantity: finalQty,
+      });
+
+      await newItem.save();
+    }
+
+    // Update or delete supply item
+    if (finalQty === supplyItem.quantity) {
+      await Supply.findByIdAndDelete(supplyId);
+    } else {
+      supplyItem.quantity -= finalQty;
+      await supplyItem.save();
+    }
+
+    res.status(201).json({ message: "Item added to inventory successfully." });
   } catch (err) {
     next(err);
   }
 };
+
+
+
+
+

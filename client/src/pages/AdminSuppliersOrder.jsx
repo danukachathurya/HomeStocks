@@ -48,6 +48,12 @@ export default function AdminSuppliersOrder() {
       if (!res.ok) throw new Error(data.message || "Failed to add item.");
 
       setSuccessMessage(data.message);
+      fetchOrders(); // Refresh the table
+
+      // Hide message after 5 seconds
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 3000);
     } catch (err) {
       alert(err.message);
     }
@@ -63,7 +69,9 @@ export default function AdminSuppliersOrder() {
   return (
     <div className="overflow-x-auto">
       {successMessage && (
-        <p className="text-green-600 font-medium mb-2">{successMessage}</p>
+        <div className="bg-green-100 text-green-800 border border-green-400 px-4 py-2 rounded mb-4 transition-opacity duration-500">
+          {successMessage}
+        </div>
       )}
       <table className="min-w-full border border-gray-300">
         <thead>

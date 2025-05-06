@@ -4,6 +4,7 @@ export default function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const fetchUsers = async () => {
     try {
@@ -17,10 +18,10 @@ export default function ManageUsers() {
         throw new Error(data.message || "Failed to fetch users.");
       }
 
-      setUsers(data.users || []); // ✅ Prevent undefined
+      setUsers(data.users || []);
     } catch (err) {
       setError(err.message);
-      setUsers([]); // ✅ Ensure empty array on error
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -44,6 +45,8 @@ export default function ManageUsers() {
       }
 
       setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
+      setSuccessMessage("User deleted successfully.");
+      setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
       alert(err.message);
     }
@@ -59,6 +62,13 @@ export default function ManageUsers() {
   return (
     <div className="overflow-x-auto">
       <h2 className="text-xl font-semibold mb-4">Manage Users</h2>
+
+      {successMessage && (
+        <div className="bg-green-100 text-green-800 border border-green-400 px-4 py-2 rounded mb-4 transition-opacity duration-500">
+          {successMessage}
+        </div>
+      )}
+
       <table className="min-w-full border border-gray-300">
         <thead>
           <tr className="bg-gray-200 text-left">
