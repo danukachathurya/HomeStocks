@@ -117,7 +117,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
     if (validationError) {
       setSubmitError(validationError);
       return;
-    }
+    } 
 
     const itemCodeArray = Array.from(
       { length: itemCodeEnd - itemCodeStart + 1 },

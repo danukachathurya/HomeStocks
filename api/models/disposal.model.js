@@ -11,7 +11,7 @@ const disposalSchema = new mongoose.Schema(
       required: true,
     },
     itemCode: {
-      type: String,
+      type: [String], 
       required: true,
     },
     location: {

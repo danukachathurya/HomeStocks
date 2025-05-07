@@ -4,12 +4,15 @@ import {
   getProducts,
   getProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  searchProductsByName
 } from '../controllers/product.controller.js';
 
 import { protect, adminOnly } from '../middleware/authmiddleware.js';
 
 const router = express.Router();
+
+router.get('/search', protect, adminOnly, searchProductsByName);
 
 // Add a new product (admin only)
 router.post('/add', protect, adminOnly, addProduct);

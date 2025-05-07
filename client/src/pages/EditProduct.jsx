@@ -62,7 +62,7 @@ const EditProduct = ({ openModal, setOpenModal, product, onProductUpdated }) => 
           }
           return prev + 10;
         });
-      }, 200);
+      }, 200); 
     } catch (error) {
       console.error('Image upload failed:', error);
       setUploadError('Image upload failed. Please try again.');
