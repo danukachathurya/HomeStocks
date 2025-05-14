@@ -10,6 +10,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { signoutSuccess } from "../redux/user/userSlice";
+import Home from "./Home"; // Update path based on your structure
+import DashProfile from "../components/DashProfile"; // Update path based on your structure
 
 export default function UserDashboard() {
   const dispatch = useDispatch();
@@ -84,9 +86,12 @@ export default function UserDashboard() {
         <h1 className="text-2xl font-bold mb-4">User Dashboard</h1>
 
         {activeTab === "overview" && (
+          <div>
           <p className="text-gray-700">
             Hello <strong>{currentUser?.username}</strong>! Welcome to your user dashboard.
           </p>
+          <Home />
+          </div>
         )}
 
         {activeTab === "myItems" && (
@@ -99,9 +104,7 @@ export default function UserDashboard() {
 
         {activeTab === "profile" && (
           <div>
-            <h2 className="text-xl font-semibold mb-2">Your Profile</h2>
-            <p>Manage your personal information and preferences.</p>
-            {/* Add profile editing logic here */}
+            <DashProfile />
           </div>
         )}
 
