@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Button, TextInput, Modal, Alert, FileInput, Datepicker } from 'flowbite-react';
+import { Button, TextInput, Modal, Alert, FileInput, Datepicker, Label } from 'flowbite-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { CircularProgressbar } from 'react-circular-progressbar';
@@ -41,7 +41,7 @@ const EditProduct = ({ openModal, setOpenModal, product, onProductUpdated }) => 
         description: product.description || '',
         itemImage: product.itemImage || '',
       });
-    }
+    } 
   }, [product]);
 
   const handleImageUpload = async () => {
@@ -101,6 +101,7 @@ const EditProduct = ({ openModal, setOpenModal, product, onProductUpdated }) => 
       <Modal.Header>Edit Product</Modal.Header>
       <Modal.Body>
         <form className="flex flex-col gap-3" onSubmit={handleEdit}>
+          <Label htmlFor="category" value="Category" />
           <TextInput
             placeholder="Category"
             id="category"
@@ -110,6 +111,7 @@ const EditProduct = ({ openModal, setOpenModal, product, onProductUpdated }) => 
               setFormData((prev) => ({ ...prev, category: e.target.value }))
             }
           />
+          <Label htmlFor="Supplier Name" value="Supplier Name" />
           <TextInput
             placeholder="Supplier Name"
             id="supplierName"
@@ -119,6 +121,7 @@ const EditProduct = ({ openModal, setOpenModal, product, onProductUpdated }) => 
               setFormData((prev) => ({ ...prev, supplierName: e.target.value }))
             }
           />
+          <Label htmlFor="Item Name" value="Item Name" />
           <TextInput
             placeholder="Item Name"
             id="itemName"
@@ -128,6 +131,7 @@ const EditProduct = ({ openModal, setOpenModal, product, onProductUpdated }) => 
               setFormData((prev) => ({ ...prev, itemName: e.target.value }))
             }
           />
+          <Label htmlFor="Price" value="Price" />
           <TextInput
             placeholder="Price"
             id="price"
@@ -138,7 +142,7 @@ const EditProduct = ({ openModal, setOpenModal, product, onProductUpdated }) => 
               setFormData((prev) => ({ ...prev, price: e.target.value }))
             }
           />
-
+          <Label htmlFor="Add Image" value="Add Image" />
           <div className="flex gap-2 items-center">
             <FileInput
               accept="image/*"
@@ -169,7 +173,7 @@ const EditProduct = ({ openModal, setOpenModal, product, onProductUpdated }) => 
               className="h-32 object-cover rounded"
             />
           )}
-
+          <Label htmlFor="Quantity" value="Quantity" />
           <TextInput
             placeholder="Quantity"
             id="quantity"
@@ -180,6 +184,7 @@ const EditProduct = ({ openModal, setOpenModal, product, onProductUpdated }) => 
               setFormData((prev) => ({ ...prev, quantity: e.target.value }))
             }
           />
+          <Label htmlFor="Item Code" value="Item Code" />
           <TextInput
             placeholder="Item Code"
             id="itemCode"
@@ -189,8 +194,8 @@ const EditProduct = ({ openModal, setOpenModal, product, onProductUpdated }) => 
               setFormData((prev) => ({ ...prev, itemCode: e.target.value }))
             }
           />
-
           <div className="flex gap-2">
+            <Label htmlFor="Purchase Date" value="Purchase Date" />
             <Datepicker
               placeholder="Purchase Date"
               id="purchaseDate"
@@ -199,6 +204,7 @@ const EditProduct = ({ openModal, setOpenModal, product, onProductUpdated }) => 
                 setFormData((prev) => ({ ...prev, purchaseDate: date }))
               }
             />
+            <Label htmlFor="Expiry Date" value="Expiry Date" />
             <Datepicker
               placeholder="Expiry Date"
               id="expiryDate"
@@ -208,7 +214,7 @@ const EditProduct = ({ openModal, setOpenModal, product, onProductUpdated }) => 
               }
             />
           </div>
-
+          <Label htmlFor="Description" value="Description" />
           <ReactQuill
             ref={quillRef}
             theme="snow"
