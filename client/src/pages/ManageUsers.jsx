@@ -5,6 +5,7 @@ export default function ManageUsers() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchUsers = async () => {
     try {
@@ -28,9 +29,7 @@ export default function ManageUsers() {
   };
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this user?"
-    );
+    const confirmed = window.confirm("Are you sure you want to delete this user?");
     if (!confirmed) return;
 
     try {
@@ -56,50 +55,82 @@ export default function ManageUsers() {
     fetchUsers();
   }, []);
 
-  if (loading) return <p>Loading users...</p>;
-  if (error) return <p className="text-red-600">{error}</p>;
+  const filteredUsers = users.filter((user) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      user.username.toLowerCase().includes(term) ||
+      user.email.toLowerCase().includes(term) ||
+      user.role.toLowerCase().includes(term)
+    );
+  });
+
+  if (loading) return <p className="text-center text-gray-500">Loading users...</p>;
+  if (error) return <p className="text-red-600 text-center">{error}</p>;
 
   return (
-    <div className="overflow-x-auto">
-      <h2 className="text-xl font-semibold mb-4">Manage Users</h2>
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      
 
+      {/* Search Input - full width */}
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="🔍 Search by username, email, or role"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+        />
+      </div>
+
+      {/* Success Message */}
       {successMessage && (
-        <div className="bg-green-100 text-green-800 border border-green-400 px-4 py-2 rounded mb-4 transition-opacity duration-500">
+        <div className="mb-4 bg-green-100 text-green-800 border border-green-400 px-4 py-3 rounded shadow-sm">
           {successMessage}
         </div>
       )}
 
-      <table className="min-w-full border border-gray-300">
-        <thead>
-          <tr className="bg-gray-200 text-left">
-            <th className="py-2 px-4">Username</th>
-            <th className="py-2 px-4">Email</th>
-            <th className="py-2 px-4">Role</th>
-            <th className="py-2 px-4">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user._id} className="border-t border-gray-300">
-              <td className="py-2 px-4">{user.username}</td>
-              <td className="py-2 px-4">{user.email}</td>
-              <td className="py-2 px-4">{user.role}</td>
-              <td className="py-2 px-4">
-                {user.role === "admin" ? (
-                  <span className="text-gray-500">Cannot delete</span>
-                ) : (
-                  <button
-                    onClick={() => handleDelete(user._id)}
-                    className="text-red-600 hover:underline"
-                  >
-                    Delete
-                  </button>
-                )}
-              </td>
+      {/* Users Table */}
+      <div className="overflow-auto rounded-lg shadow border border-gray-200">
+        <table className="min-w-full bg-white">
+          <thead className="bg-gray-100 text-gray-700">
+            <tr>
+              <th className="py-3 px-5 text-left">Username</th>
+              <th className="py-3 px-5 text-left">Email</th>
+              <th className="py-3 px-5 text-left">Role</th>
+              <th className="py-3 px-5 text-left">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredUsers.map((user, index) => (
+              <tr
+                key={user._id}
+                className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+              >
+                <td className="py-3 px-5">{user.username}</td>
+                <td className="py-3 px-5">{user.email}</td>
+                <td className="py-3 px-5 capitalize">{user.role}</td>
+                <td className="py-3 px-5">
+                  {user.role === "admin" ? (
+                    <span className="text-gray-400 italic">Cannot delete</span>
+                  ) : (
+                    <button
+                      onClick={() => handleDelete(user._id)}
+                      className="text-red-600 hover:underline hover:text-red-800 font-medium transition"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* Empty state */}
+        {filteredUsers.length === 0 && (
+          <p className="p-4 text-center text-gray-500">No users found.</p>
+        )}
+      </div>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import Supply from "../models/supply.model.js";
 import Inventory from "../models/inventory.model.js";
+import Product from "../models/product.model.js";
 
 const allowedRoles = ['inventorymanager', 'supplier', 'user'];
 
@@ -197,6 +198,48 @@ export const getUserCount = async (req, res, next) => {
   }
 };
 
+//get all inventories item count
+export const getInventoryCount = async (req, res, next) => {
+  try {
+    if (!req.user?.isAdmin) {
+      return res.status(403).json({ message: 'Only admins can view inventory count.' });
+    }
+
+    const count = await Inventory.countDocuments();
+    res.status(200).json({ totalInventories: count });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get total product count (Admin only)
+export const getProductCount = async (req, res, next) => {
+  try {
+    if (!req.user?.isAdmin) {
+      return next(errorHandler(403, 'Only admins can view product count.'));
+    }
+
+    const count = await Product.countDocuments();
+    res.status(200).json({ totalProducts: count });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get total supply items count (Admin only)
+export const getSupplyCount = async (req, res, next) => {
+  try {
+    if (!req.user?.isAdmin) {
+      return res.status(403).json({ message: 'Only admins can view supply count.' });
+    }
+
+    const count = await Supply.countDocuments();
+    res.status(200).json({ totalSupplies: count });
+  } catch (error) {
+    console.error("Error fetching supply count:", error);
+    next(error);
+  }
+};
 
 
 
