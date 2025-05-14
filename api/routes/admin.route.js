@@ -42,4 +42,5 @@ router.get('/user-count', protect, adminOnly, getUserCount);
 router.get('/inventory-count', protect, adminOnly, getInventoryCount);
 
 
+
 export default router;
