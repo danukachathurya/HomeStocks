@@ -28,21 +28,23 @@ export default function Product() {
 
   const handleDelete = async (productId) => {
     try {
-      const res = await fetch(`/api/product/delete/${productId}/${currentUser._id}`, {
+      const res = await fetch(`/api/product/delete/${productId}`, {
         method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`,
+        },
       });
       const data = await res.json();
       if (data.success === false) {
         console.log(data.message);
         return;
       }
-      setProducts((prev) =>
-        prev.filter((product) => product._id !== productId)
-      );
+      setProducts((prev) => prev.filter((product) => product._id !== productId));
     } catch (error) {
       console.log(error.message);
     }
   };
+  
 
   const handleEdit = (product) => {
     setProductToEdit(product); 

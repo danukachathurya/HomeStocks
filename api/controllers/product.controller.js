@@ -22,11 +22,11 @@ export const getProducts = async (req, res, next) => {
   }
 };
 
-
+ 
 // Get single product by ID
 export const getProduct = async (req, res, next) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.productId);
     if (!product) {
       return next(errorHandler(404, 'Product not found!'));
     }
@@ -60,5 +60,36 @@ export const deleteProduct = async (req, res, next) => {
     res.status(200).json("Product deleted successfully");
   } catch (error) {
     next(error);
+  }
+};
+
+export const searchProductsByName = async (req, res, next) => {
+  try {
+    const { query } = req.query;
+    
+    if (!query || query.trim().length < 2) {
+      return res.status(200).json([]);
+    }
+
+    const products = await Product.find({
+      $or: [
+        { itemName: { $regex: query.trim(), $options: 'i' } },
+        { itemCode: { $elemMatch: { $regex: query.trim(), $options: 'i' } } }
+      ]
+    })
+    .limit(10)
+    .select('itemName itemCode category')
+    .lean();
+
+    const results = products.map(product => ({
+      _id: product._id,
+      itemName: product.itemName,
+      itemCodes: product.itemCode || [], 
+      category: product.category || ''
+    }));
+
+    res.status(200).json(results);
+  } catch (error) {
+    next(errorHandler(500, "Search failed"));
   }
 };

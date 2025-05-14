@@ -1,13 +1,32 @@
 import express from 'express';
-import { verifyToken } from '../utils/verifyUser.js';
-import { addProduct, getProducts, getProduct, updateProduct, deleteProduct } from '../controllers/product.controller.js';
+import {
+  addProduct,
+  getProducts,
+  getProduct,
+  updateProduct,
+  deleteProduct,
+  searchProductsByName
+} from '../controllers/product.controller.js';
+
+import { protect, adminOnly } from '../middleware/authmiddleware.js';
 
 const router = express.Router();
 
-router.post('/add', verifyToken, addProduct);
+router.get('/search', protect, adminOnly, searchProductsByName);
+
+// Add a new product (admin only)
+router.post('/add', protect, adminOnly, addProduct);
+
+// Get all products (public or restricted depending on your logic)
 router.get('/all', getProducts);
+
+// Get a single product by ID
 router.get('/:productId', getProduct);
-router.put('/update/:productId/:userId', verifyToken, updateProduct);
-router.delete('/delete/:productId/:userId', verifyToken, deleteProduct);
+
+// Update product (admin only)
+router.put('/update/:productId/:userId', protect, adminOnly, updateProduct);
+
+// Delete product (admin only)
+router.delete('/delete/:productId', protect, adminOnly, deleteProduct);
 
 export default router;

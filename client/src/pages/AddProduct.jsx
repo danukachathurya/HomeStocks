@@ -8,8 +8,8 @@ import {
   Label,
 } from "flowbite-react";
 import { useState, useRef } from "react";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill";
 import {
   getStorage,
   ref,
@@ -117,7 +117,7 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
     if (validationError) {
       setSubmitError(validationError);
       return;
-    }
+    } 
 
     const itemCodeArray = Array.from(
       { length: itemCodeEnd - itemCodeStart + 1 },
