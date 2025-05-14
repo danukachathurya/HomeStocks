@@ -8,14 +8,13 @@ import {
   searchProductsByName
 } from '../controllers/product.controller.js';
 
-import { protect, adminOnly } from '../middleware/authmiddleware.js';
 
 const router = express.Router();
 
-router.get('/search', protect, adminOnly, searchProductsByName);
+router.get('/search', searchProductsByName);
 
 // Add a new product (admin only)
-router.post('/add', protect, adminOnly, addProduct);
+router.post('/add', addProduct);
 
 // Get all products (public or restricted depending on your logic)
 router.get('/all', getProducts);
@@ -24,9 +23,9 @@ router.get('/all', getProducts);
 router.get('/:productId', getProduct);
 
 // Update product (admin only)
-router.put('/update/:productId/:userId', protect, adminOnly, updateProduct);
+router.put('/update/:productId/:userId', updateProduct);
 
 // Delete product (admin only)
-router.delete('/delete/:productId', protect, adminOnly, deleteProduct);
+router.delete('/delete/:productId', deleteProduct);
 
 export default router;

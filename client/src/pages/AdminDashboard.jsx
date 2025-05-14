@@ -33,7 +33,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
+      {/* Sidebar */} 
       <DashSidebar
         role="admin"
         activeTab={activeTab}
