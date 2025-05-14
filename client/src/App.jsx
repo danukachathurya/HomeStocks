@@ -71,13 +71,6 @@ export default function App() {
             <h1 className="text-center mt-10 text-3xl">404 - Page Not Found</h1>
           }
         />
-        <Route path="/search" element={<Search />} />
-        <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Route>
-        <Route element={<OnlyAdminPrivateRoute />}>
-        </Route>
-        <Route path="*" element={<h1 className="text-center mt-10 text-3xl">404 - Page Not Found</h1>} />
       </Routes>
       <Footer />
     </BrowserRouter>

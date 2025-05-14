@@ -44,4 +44,5 @@ const supplySchema = new mongoose.Schema(
 );
 
 const Supply = mongoose.model("Supply", supplySchema);
+export default Supply;
 

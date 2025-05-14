@@ -11,16 +11,14 @@ import {
   HiUserAdd,
   HiTrash,
   HiEye,
-  HiArrowSmRight,
-  HiChartPie,
   HiTrendingUp,
   HiOutlineUserGroup,
   HiClock,
   HiUser,
   HiOutlineBan,
-  HiCube
 } from "react-icons/hi";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
 const roleTabs = {
   admin: [
@@ -61,8 +59,7 @@ export default function DashSidebar({ role, activeTab, setActiveTab, onSignOut }
             <Sidebar.Item
               key={tab.key}
               icon={tab.icon}
-              active={tab === "products"}
-              icon={HiCube}
+              active={activeTab === tab.key}
               as="div"
               onClick={() => setActiveTab(tab.key)}
               className={activeTab === tab.key ? "bg-gray-200 dark:bg-gray-700" : ""}
@@ -70,61 +67,12 @@ export default function DashSidebar({ role, activeTab, setActiveTab, onSignOut }
               {tab.label}
             </Sidebar.Item>
           ))}
-          <Sidebar.Item icon={HiArrowSmRight} onClick={onSignOut}>
-          </Link>
-          <Link to="/dashboard?tab=expire-soon">
-            <Sidebar.Item
-              active={tab === "expire-soon"}
-              icon={HiClock}
-              as="div"
-            >
-              Expire Soon
-            </Sidebar.Item>
-          </Link>
-          <Link to="/dashboard?tab=expired-products">
-            <Sidebar.Item
-              active={tab === "expired-products"}
-              icon={HiOutlineBan}
-              as="div"
-            >
-              Expired Products
-            </Sidebar.Item>
-          </Link>
-          <Link to="/dashboard?tab=high-demand">
-            <Sidebar.Item
-              active={tab === "high-demand"}
-              icon={HiTrendingUp}
-              as="div"
-            >
-              Demand Products
-            </Sidebar.Item>
-          </Link>
-          <Link to="/dashboard?tab=disposal">
-            <Sidebar.Item
-              active={tab === "disposal"}
-              icon={HiTrash}
-              as="div"
-            >
-              Disposal Products
-            </Sidebar.Item>
-          </Link>
-          <Link to="/dashboard?tab=show-disposal">
-            <Sidebar.Item
-              active={tab === "show-disposal"}
-              icon={HiEye}
-              as="div"
-            >
-              Show Disposal
-            </Sidebar.Item>
-          </Link>
 
-          <Sidebar.Item
-            icon={HiArrowSmRight}
-            className="cursor-pointer"
-            onClick={handleSignout}
-          >
+          <Sidebar.Item icon={HiArrowSmRight} onClick={onSignOut}>
             Sign Out
           </Sidebar.Item>
+
+          
         </Sidebar.ItemGroup>
       </Sidebar.Items>
     </Sidebar>
