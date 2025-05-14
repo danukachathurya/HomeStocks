@@ -9,16 +9,9 @@ import {
   HiArrowSmRight,
   HiClipboardList,
   HiUserAdd,
-  HiTrash,
-  HiEye,
   HiTrendingUp,
-  HiOutlineUserGroup,
-  HiClock,
-  HiUser,
-  HiOutlineBan,
 } from "react-icons/hi";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
 
 const roleTabs = {
   admin: [
@@ -26,13 +19,13 @@ const roleTabs = {
     { key: "manageUsers", label: "Manage Users", icon: HiUserGroup },
     { key: "assignRoles", label: "Assign Roles", icon: HiUserAdd },
     { key: "profile", label: "Your Profile", icon: HiOutlineUserCircle },
-    { key: "suppliersOrder", label: "Suppliers Order", icon: HiClipboardList }, 
+    { key: "suppliersOrder", label: "Suppliers Order", icon: HiClipboardList },
   ],
   supplier: [
     { key: "overview", label: "Overview", icon: HiHome },
     { key: "mySupplies", label: "My Supplies", icon: HiClipboardList },
     { key: "profile", label: "Your Profile", icon: HiOutlineUserCircle },
-    { key: "settings", label: "Settings", icon: HiCog }, 
+    { key: "settings", label: "Settings", icon: HiCog },
   ],
   inventoryManager: [
     { key: "overview", label: "Overview", icon: HiHome },
@@ -43,6 +36,7 @@ const roleTabs = {
   user: [
     { key: "overview", label: "Overview", icon: HiHome },
     { key: "myItems", label: "My Items", icon: HiBookmark },
+    { key: "addPayment", label: "Add Payment", icon: HiTrendingUp }, // ✅ Added
     { key: "profile", label: "Your Profile", icon: HiOutlineUserCircle },
     { key: "settings", label: "Settings", icon: HiCog },
   ],
@@ -52,7 +46,7 @@ export default function DashSidebar({ role, activeTab, setActiveTab, onSignOut }
   const tabs = roleTabs[role] || [];
 
   return (
-    <Sidebar aria-label="Dashboard Sidebar" className="w-64">
+    <Sidebar aria-label="Dashboard Sidebar" className="w-64 min-h-screen">
       <Sidebar.Items>
         <Sidebar.ItemGroup>
           {tabs.map((tab) => (
@@ -68,11 +62,9 @@ export default function DashSidebar({ role, activeTab, setActiveTab, onSignOut }
             </Sidebar.Item>
           ))}
 
-          <Sidebar.Item icon={HiArrowSmRight} onClick={onSignOut}>
+          <Sidebar.Item icon={HiArrowSmRight} as="div" onClick={onSignOut}>
             Sign Out
           </Sidebar.Item>
-
-          
         </Sidebar.ItemGroup>
       </Sidebar.Items>
     </Sidebar>
