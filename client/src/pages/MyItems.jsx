@@ -21,7 +21,12 @@ const MyItems = ({ onProceedToCheckout }) => {
   const handleIncrease = (productId) => {
     const updatedCart = cartItems.map(item => {
       if (item._id === productId) {
-        return { ...item, quantity: item.quantity + 1 };
+        const maxQty = item.availableQuantity ?? 10;
+        if (item.quantity < maxQty) {
+          return { ...item, quantity: item.quantity + 1 };
+        } else {
+          alert(`Only ${maxQty} items are available.`);
+        }
       }
       return item;
     });
@@ -65,13 +70,21 @@ const MyItems = ({ onProceedToCheckout }) => {
                 <span className="font-medium">{item.quantity}</span>
                 <button
                   onClick={() => handleIncrease(item._id)}
-                  className="bg-gray-300 px-2 py-1 rounded hover:bg-gray-400"
+                  disabled={item.quantity >= (item.availableQuantity ?? 10)}
+                  className={`bg-gray-300 px-2 py-1 rounded hover:bg-gray-400 ${
+                    item.quantity >= (item.availableQuantity ?? 10)
+                      ? 'opacity-50 cursor-not-allowed'
+                      : ''
+                  }`}
                 >
                   +
                 </button>
               </div>
               <p className="text-green-600 font-bold">
                 Price: ${item.price * item.quantity}
+              </p>
+              <p className="text-sm text-gray-500">
+                Available: {item.availableQuantity ?? 'N/A'}
               </p>
             </div>
             <button

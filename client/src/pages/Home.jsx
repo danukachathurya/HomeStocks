@@ -33,14 +33,33 @@ const Home = () => {
     const cart = JSON.parse(localStorage.getItem("cartItems")) || [];
     const existing = cart.find((item) => item._id === product._id);
 
+    const availableQty = product.quantity || product.stock || 0;
+
     if (!existing) {
-      cart.push({ ...product, quantity: 1 });
+      if (availableQty > 0) {
+        cart.push({
+          _id: product._id,
+          itemName: product.itemName,
+          price: product.price,
+          quantity: 1,
+          availableQuantity: availableQty,
+        });
+        alert(`${product.itemName} added to cart!`);
+      } else {
+        alert(`${product.itemName} is out of stock.`);
+        return;
+      }
     } else {
-      existing.quantity += 1;
+      if (existing.quantity < existing.availableQuantity) {
+        existing.quantity += 1;
+        alert(`${product.itemName} quantity updated in cart.`);
+      } else {
+        alert(`Only ${existing.availableQuantity} ${product.itemName} available in stock.`);
+        return;
+      }
     }
 
     localStorage.setItem("cartItems", JSON.stringify(cart));
-    alert(`${product.itemName} added to cart!`);
   };
 
   if (loading) return <div className="text-center mt-10">Loading products...</div>;
@@ -72,7 +91,10 @@ const Home = () => {
               />
               <h2 className="text-xl font-semibold mb-2">{product.itemName}</h2>
               <p className="text-gray-600 mb-1">Category: {product.category}</p>
-              <p className="text-gray-800 font-bold mb-2">Price: ${product.price}</p>
+              <p className="text-gray-800 font-bold mb-1">Price: ${product.price}</p>
+              <p className="text-gray-600 mb-3">
+                Available: {product.quantity || product.stock || 0}
+              </p>
               <button
                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                 onClick={() => handleAddToCart(product)}
