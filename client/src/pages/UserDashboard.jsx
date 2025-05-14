@@ -6,12 +6,15 @@ import {
   HiBookmark,
   HiCog,
   HiArrowSmRight,
+  HiCreditCard
 } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { signoutSuccess } from "../redux/user/userSlice";
 import Home from "./Home"; // Update path based on your structure
 import DashProfile from "../components/DashProfile"; // Update path based on your structure
+import MyItems from "./MyItems";
+import Checkout from "./Checkout";
 
 export default function UserDashboard() {
   const dispatch = useDispatch();
@@ -46,7 +49,9 @@ export default function UserDashboard() {
               icon={HiHome}
               as="div"
               onClick={() => setActiveTab("overview")}
-              className={activeTab === "overview" ? "bg-gray-200 dark:bg-gray-700" : ""}
+              className={
+                activeTab === "overview" ? "bg-gray-200 dark:bg-gray-700" : ""
+              }
             >
               Overview
             </Sidebar.Item>
@@ -54,15 +59,31 @@ export default function UserDashboard() {
               icon={HiBookmark}
               as="div"
               onClick={() => setActiveTab("myItems")}
-              className={activeTab === "myItems" ? "bg-gray-200 dark:bg-gray-700" : ""}
+              className={
+                activeTab === "myItems" ? "bg-gray-200 dark:bg-gray-700" : ""
+              }
             >
               My Items
             </Sidebar.Item>
+
+            <Sidebar.Item
+              icon={HiCreditCard}
+              as="div"
+              onClick={() => setActiveTab("checkout")}
+              className={
+                activeTab === "checkout" ? "bg-gray-200 dark:bg-gray-700" : ""
+              }
+            >
+              Checkout
+            </Sidebar.Item>
+
             <Sidebar.Item
               icon={HiOutlineUserCircle}
               as="div"
               onClick={() => setActiveTab("profile")}
-              className={activeTab === "profile" ? "bg-gray-200 dark:bg-gray-700" : ""}
+              className={
+                activeTab === "profile" ? "bg-gray-200 dark:bg-gray-700" : ""
+              }
             >
               Your Profile
             </Sidebar.Item>
@@ -70,7 +91,9 @@ export default function UserDashboard() {
               icon={HiCog}
               as="div"
               onClick={() => setActiveTab("settings")}
-              className={activeTab === "settings" ? "bg-gray-200 dark:bg-gray-700" : ""}
+              className={
+                activeTab === "settings" ? "bg-gray-200 dark:bg-gray-700" : ""
+              }
             >
               Settings
             </Sidebar.Item>
@@ -87,18 +110,25 @@ export default function UserDashboard() {
 
         {activeTab === "overview" && (
           <div>
-          <p className="text-gray-700">
-            Hello <strong>{currentUser?.username}</strong>! Welcome to your user dashboard.
-          </p>
-          <Home />
+            <p className="text-gray-700">
+              Hello <strong>{currentUser?.username}</strong>! Welcome to your
+              user dashboard.
+            </p>
+            <Home />
           </div>
         )}
 
         {activeTab === "myItems" && (
           <div>
-            <h2 className="text-xl font-semibold mb-2">My Items</h2>
+            <MyItems onProceedToCheckout={() => setActiveTab("checkout")} />
+          </div>
+        )}
+
+        {activeTab === "checkout" && (
+          <div>
+            <h2 className="text-xl font-semibold mb-2">Checkout</h2>
             <p>View your saved or purchased items here.</p>
-            {/* Include item listing or component here */}
+            <Checkout />
           </div>
         )}
 
