@@ -10,6 +10,7 @@ import { getAllSupplies } from "../controllers/admin.controller.js";
 import { addToInventory } from "../controllers/admin.controller.js";
 import { getUserCount } from '../controllers/admin.controller.js';
 import { getInventoryCount } from '../controllers/admin.controller.js';
+import { getProductCount } from '../controllers/admin.controller.js';
 
 
 const router = express.Router();
@@ -40,6 +41,9 @@ router.get('/user-count', protect, adminOnly, getUserCount);
 
 // get inventories count
 router.get('/inventory-count', protect, adminOnly, getInventoryCount);
+
+// get products count
+router.get('/product-count', protect, adminOnly, getProductCount);
 
 
 
