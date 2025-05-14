@@ -12,7 +12,7 @@ const EditProduct = ({ openModal, setOpenModal, product, onProductUpdated }) => 
     category: '',
     itemName: '',
     supplierName: '',
-    price: '',
+    price: '', 
     quantity: '',
     itemCode: '',
     purchaseDate: '',
@@ -26,6 +26,36 @@ const EditProduct = ({ openModal, setOpenModal, product, onProductUpdated }) => 
   const [uploadError, setUploadError] = useState('');
   const [submitError, setSubmitError] = useState('');
   const quillRef = useRef(null);
+
+  const validateForm = () => {
+    const requiredFields = [
+      "category",
+      "supplierName",
+      "itemName",
+      "price",
+      "itemImage",
+      "quantity",
+      "purchaseDate",
+      "expiryDate",
+      "description",
+    ];
+  
+    for (let field of requiredFields) {
+      if (!formData[field] || formData[field].toString().trim() === "") {
+        return `All fields are required.`;
+      }
+    }
+  
+    if (isNaN(formData.price) || parseFloat(formData.price) <= 0) {
+      return "Price must be a positive number.";
+    }
+  
+    if (!Number.isInteger(Number(formData.quantity)) || formData.quantity <= 0) {
+      return "Quantity must be a positive number.";
+    }
+  
+    return null;
+  };
 
   useEffect(() => {
     if (product) {
@@ -71,6 +101,11 @@ const EditProduct = ({ openModal, setOpenModal, product, onProductUpdated }) => 
 
   const handleEdit = async (e) => {
     e.preventDefault();
+    const validationError = validateForm();
+    if (validationError) {
+      setSubmitError(validationError);
+      return;
+    }
   
     try {
       const userId = JSON.parse(localStorage.getItem('user'))?._id;
