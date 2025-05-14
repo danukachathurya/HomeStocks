@@ -9,6 +9,7 @@ import { protect, adminOnly } from '../middleware/authmiddleware.js';
 import { getAllSupplies } from "../controllers/admin.controller.js";
 import { addToInventory } from "../controllers/admin.controller.js";
 import { getUserCount } from '../controllers/admin.controller.js';
+import { getInventoryCount } from '../controllers/admin.controller.js';
 
 
 const router = express.Router();
@@ -36,6 +37,9 @@ router.post("/add-to-system/:supplyId", protect, adminOnly, addToInventory);
 
 // Get total user count
 router.get('/user-count', protect, adminOnly, getUserCount);
+
+// get inventories count
+router.get('/inventory-count', protect, adminOnly, getInventoryCount);
 
 
 export default router;

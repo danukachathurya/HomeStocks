@@ -197,6 +197,20 @@ export const getUserCount = async (req, res, next) => {
   }
 };
 
+//get all inventories item count
+export const getInventoryCount = async (req, res, next) => {
+  try {
+    if (!req.user?.isAdmin) {
+      return res.status(403).json({ message: 'Only admins can view inventory count.' });
+    }
+
+    const count = await Inventory.countDocuments();
+    res.status(200).json({ totalInventories: count });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 
 
