@@ -22,6 +22,7 @@ import ExpiredProduct from "../pages/ExpiredProduct";
 import HighDemand from "../pages/HighDemand";
 import DisposalItems from "../pages/DisposalItems";
 import DisposeDetails from "../pages/DisposeDetails";
+import UpcomingOrders from "./UpcomingOrders";
 
 export default function InventoryManagerDashboard() {
   const dispatch = useDispatch();
@@ -113,6 +114,16 @@ export default function InventoryManagerDashboard() {
               Demand Products
             </Sidebar.Item>
             <Sidebar.Item
+              icon={HiClipboardList}
+              as="div"
+              onClick={() => setActiveTab("upcoming-orders")}
+              className={
+                activeTab === "upcoming-orders" ? "bg-gray-200 dark:bg-gray-700" : ""
+              }
+            >
+              Upcoming Orders
+            </Sidebar.Item>
+            <Sidebar.Item
               icon={HiTrash}
               as="div"
               onClick={() => setActiveTab("disposal")}
@@ -177,6 +188,12 @@ export default function InventoryManagerDashboard() {
         {activeTab === "high-demand" && (
           <div>
             <HighDemand />
+          </div>
+        )}
+
+        {activeTab === "upcoming-orders" && (
+          <div>
+            <UpcomingOrders />
           </div>
         )}
 
