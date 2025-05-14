@@ -44,44 +44,54 @@ export default function AdminPosition() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-12 rounded-xl shadow-lg">
-      <h2 className="text-3xl font-bold text-center mb-8">Assign Role to User</h2>
+    <div className="w-full max-w-md mx-auto p-12 bg-white rounded-xl shadow-lg border border-gray-200">
+      <h2 className="text-3xl font-extrabold text-center mb-8 text-gray-900">
+        Assign Role to User
+      </h2>
 
       {message && (
         <div
           className={`${
             messageType === "success"
-              ? "bg-green-100 text-green-800 border border-green-400"
-              : "bg-red-100 text-red-800 border border-red-400"
-          } px-4 py-2 rounded mb-4 transition-opacity duration-500`}
+              ? "bg-green-50 border-green-400 text-green-700"
+              : "bg-red-50 border-red-400 text-red-700"
+          } border px-5 py-3 rounded-md mb-6 text-center font-medium transition-opacity duration-500`}
+          role="alert"
         >
           {message}
         </div>
       )}
 
-      <form onSubmit={handleAssignRole} className="space-y-6 text-lg">
+      <form onSubmit={handleAssignRole} className="space-y-6 text-base">
         <div>
-          <label htmlFor="email" className="block font-medium mb-1">
+          <label
+            htmlFor="email"
+            className="block mb-2 font-semibold text-gray-700"
+          >
             User Email
           </label>
           <input
             type="email"
             id="email"
-            className="w-full px-4 py-2 border rounded-md text-base"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
             placeholder="user@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            autoComplete="email"
           />
         </div>
 
         <div>
-          <label htmlFor="role" className="block font-medium mb-1">
+          <label
+            htmlFor="role"
+            className="block mb-2 font-semibold text-gray-700"
+          >
             Select Role
           </label>
           <select
             id="role"
-            className="w-full px-4 py-2 border rounded-md text-base"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
             value={role}
             onChange={(e) => setRole(e.target.value)}
           >
@@ -93,7 +103,7 @@ export default function AdminPosition() {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white px-4 py-3 rounded-md hover:bg-blue-700 text-lg font-semibold"
+          className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 rounded-lg shadow-md transition duration-200"
         >
           Assign Role
         </button>

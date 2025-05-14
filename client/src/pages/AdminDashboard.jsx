@@ -67,7 +67,7 @@ export default function AdminDashboard() {
         {activeTab === "manageUsers" && (
           <div>
             <h2 className="text-xl font-semibold mb-2">Manage Users</h2>
-            <p>View, edit, or delete user accounts.</p>
+            <p>View or delete user accounts.</p>
             <ManageUsers />
           </div>
         )}
