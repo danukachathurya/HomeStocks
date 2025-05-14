@@ -22,7 +22,7 @@ export const getProducts = async (req, res, next) => {
   }
 };
 
- 
+
 // Get single product by ID
 export const getProduct = async (req, res, next) => {
   try {

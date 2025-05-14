@@ -11,9 +11,9 @@ import { protect, adminOnly } from '../middleware/authmiddleware.js';
 
 const router = express.Router();
 
-router.post('/add', protect, adminOnly, addDisposalItem);
+router.post('/add', addDisposalItem);
 
-router.get('/all', protect, adminOnly, getDisposalItems);
+router.get('/all', getDisposalItems);
 
 router.get('/:disposalId', protect, adminOnly, getDisposalItem);
 

@@ -36,7 +36,7 @@ const roleTabs = {
   ],
   inventoryManager: [
     { key: "overview", label: "Overview", icon: HiHome },
-    { key: "inventory", label: "Inventory", icon: HiCube },
+    { key: "product", label: "Products", icon: HiCube },
     { key: "profile", label: "Your Profile", icon: HiOutlineUserCircle },
     { key: "settings", label: "Settings", icon: HiCog },
   ],
