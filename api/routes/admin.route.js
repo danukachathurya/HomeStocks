@@ -8,6 +8,8 @@ import {
 import { protect, adminOnly } from '../middleware/authmiddleware.js';
 import { getAllSupplies } from "../controllers/admin.controller.js";
 import { addToInventory } from "../controllers/admin.controller.js";
+import { getUserCount } from '../controllers/admin.controller.js';
+
 
 const router = express.Router();
 
@@ -31,5 +33,9 @@ router.delete('/delete-user/:id', protect, adminOnly, deleteUser);
 router.get("/supplier-orders", protect, adminOnly, getAllSupplies);
 
 router.post("/add-to-system/:supplyId", protect, adminOnly, addToInventory);
+
+// Get total user count
+router.get('/user-count', protect, adminOnly, getUserCount);
+
 
 export default router;

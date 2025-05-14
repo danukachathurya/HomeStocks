@@ -183,6 +183,24 @@ export const addToInventory = async (req, res, next) => {
 };
 
 
+// Get total user count (Admin only)
+export const getUserCount = async (req, res, next) => {
+  try {
+    if (!req.user?.isAdmin) {
+      return next(errorHandler(403, 'Only admins can view user count.'));
+    }
+
+    const count = await User.countDocuments();
+    res.status(200).json({ totalUsers: count });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+
+
 
 
 

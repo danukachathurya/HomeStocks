@@ -5,8 +5,9 @@ import { signoutSuccess } from "../redux/user/userSlice";
 import DashSidebar from "../components/DashSidebar"; // Update path based on your structure
 import AdminPosition from "./AdminPosition";
 import ManageUsers from "./ManageUsers"; // Update path based on your structure
-import AdminSuppliersOrder from "./AdminSuppliersOrder"; 
-
+import AdminSuppliersOrder from "./AdminSuppliersOrder";
+import DashProfile from "../components/DashProfile"; // Update path based on your structure
+import AdminOverview from "./AdminOverview"; // Update path based on your structure
 
 export default function AdminDashboard() {
   const dispatch = useDispatch();
@@ -46,9 +47,13 @@ export default function AdminDashboard() {
         <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
 
         {activeTab === "overview" && (
-          <p className="text-gray-700">
-            Hello <strong>{currentUser?.username}</strong>! Welcome to your admin dashboard.
-          </p>
+          <div>
+            <p className="text-gray-700">
+              Hello <strong>{currentUser?.username}</strong>! Welcome to your
+              admin dashboard.
+            </p>
+            <AdminOverview />
+          </div>
         )}
 
         {activeTab === "assignRoles" && (
@@ -69,9 +74,7 @@ export default function AdminDashboard() {
 
         {activeTab === "profile" && (
           <div>
-            <h2 className="text-xl font-semibold mb-2">Your Profile</h2>
-            <p>Manage your profile and preferences.</p>
-            
+            <DashProfile />
           </div>
         )}
 
