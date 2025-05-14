@@ -226,6 +226,20 @@ export const getProductCount = async (req, res, next) => {
   }
 };
 
+// Get total supply items count (Admin only)
+export const getSupplyCount = async (req, res, next) => {
+  try {
+    if (!req.user?.isAdmin) {
+      return res.status(403).json({ message: 'Only admins can view supply count.' });
+    }
+
+    const count = await Supply.countDocuments();
+    res.status(200).json({ totalSupplies: count });
+  } catch (error) {
+    console.error("Error fetching supply count:", error);
+    next(error);
+  }
+};
 
 
 
