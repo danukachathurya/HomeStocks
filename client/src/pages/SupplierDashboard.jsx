@@ -10,6 +10,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { signoutSuccess } from "../redux/user/userSlice";
+import DashProfile from "../components/DashProfile";
+import Supply from "../pages/Supply";
 
 export default function SupplierDashboard() {
   const dispatch = useDispatch();
@@ -49,28 +51,20 @@ export default function SupplierDashboard() {
               Overview
             </Sidebar.Item>
             <Sidebar.Item
-              icon={HiShoppingCart}
-              as="div"
-              onClick={() => setActiveTab("orders")}
-              className={activeTab === "orders" ? "bg-gray-200 dark:bg-gray-700" : ""}
-            >
-              Supply Orders
-            </Sidebar.Item>
-            <Sidebar.Item
-              icon={HiDocumentReport}
-              as="div"
-              onClick={() => setActiveTab("products")}
-              className={activeTab === "products" ? "bg-gray-200 dark:bg-gray-700" : ""}
-            >
-              Manage Products
-            </Sidebar.Item>
-            <Sidebar.Item
               icon={HiOutlineUserGroup}
               as="div"
               onClick={() => setActiveTab("profile")}
               className={activeTab === "profile" ? "bg-gray-200 dark:bg-gray-700" : ""}
             >
               Your Profile
+            </Sidebar.Item>
+            <Sidebar.Item
+              icon={HiShoppingCart}
+              as="div"
+              onClick={() => setActiveTab("supply")}
+              className={activeTab === "supply" ? "bg-gray-200 dark:bg-gray-700" : ""}
+            >
+              Supply
             </Sidebar.Item>
             <Sidebar.Item icon={HiArrowSmRight} onClick={handleSignOut}>
               Sign Out
@@ -89,29 +83,19 @@ export default function SupplierDashboard() {
           </p>
         )}
 
-        {activeTab === "orders" && (
-          <div>
-            <h2 className="text-xl font-semibold mb-2">Supply Orders</h2>
-            <p>View and manage your supply orders here.</p>
-            {/* Add supply order logic here */}
-          </div>
-        )}
-
-        {activeTab === "products" && (
-          <div>
-            <h2 className="text-xl font-semibold mb-2">Product Management</h2>
-            <p>Manage your products, update stock status, and more.</p>
-            {/* Add product management logic here */}
-          </div>
-        )}
-
         {activeTab === "profile" && (
           <div>
-            <h2 className="text-xl font-semibold mb-2">Your Profile</h2>
             <p>Manage your profile and settings.</p>
-            {/* Add profile settings logic here */}
+            <DashProfile />
           </div>
         )}
+
+        {activeTab === "supply" && (
+          <div>
+            <Supply />
+          </div>
+        )}
+
       </div>
     </div>
   );

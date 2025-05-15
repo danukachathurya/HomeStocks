@@ -5,6 +5,7 @@ import {
   FileInput,
   Datepicker,
   Alert,
+  Label
 } from "flowbite-react";
 import { useState, useRef } from "react";
 import "react-quill/dist/quill.snow.css";
@@ -113,14 +114,14 @@ export default function AddSupply({ openModal, setOpenModal, onSupplyAdded }) {
     } catch {
       setSubmitError("Something went wrong. Please try again.");
     }
-  };
+  }; 
 
   return (
     <Modal show={openModal} onClose={() => setOpenModal(false)}>
       <Modal.Header>Add Supply</Modal.Header>
       <Modal.Body>
         <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
-          {/* Category Input */}
+          <Label htmlFor="category" value="Category" />
           <TextInput
             placeholder="Category"
             onChange={(e) =>
@@ -130,7 +131,7 @@ export default function AddSupply({ openModal, setOpenModal, onSupplyAdded }) {
               }))
             }
           />
-          {/* Supplier Name Input */}
+          <Label htmlFor="Supplier Name" value="Supplier Name" />
           <TextInput
             placeholder="Supplier Name"
             onChange={(e) =>
@@ -140,7 +141,7 @@ export default function AddSupply({ openModal, setOpenModal, onSupplyAdded }) {
               }))
             }
           />
-          {/* Item Name Input */}
+          <Label htmlFor="Item Name" value="Item Name" />
           <TextInput
             placeholder="Item Name"
             onChange={(e) =>
@@ -150,9 +151,10 @@ export default function AddSupply({ openModal, setOpenModal, onSupplyAdded }) {
               }))
             }
           />
-          {/* Price Input */}
+          <Label htmlFor="Price" value="Price" />
           <TextInput
             placeholder="Price"
+            type="number"
             onChange={(e) =>
               setFormData((prevData) => ({
                 ...prevData,
@@ -160,7 +162,7 @@ export default function AddSupply({ openModal, setOpenModal, onSupplyAdded }) {
               }))
             }
           />
-          {/* Image Upload Section */}
+          <Label htmlFor="Add Image" value="Add Image" />
           <div className="flex gap-2 items-center">
             <FileInput
               accept="image/*"
@@ -195,9 +197,10 @@ export default function AddSupply({ openModal, setOpenModal, onSupplyAdded }) {
               className="h-32 object-cover mt-2"
             />
           )}
-          {/* Quantity Input */}
+          <Label htmlFor="Quantity" value="Quantity" />
           <TextInput
             placeholder="Quantity"
+            type="number"
             onChange={(e) =>
               setFormData((prevData) => ({
                 ...prevData,
@@ -207,6 +210,7 @@ export default function AddSupply({ openModal, setOpenModal, onSupplyAdded }) {
           />
           {/* Datepickers for purchase and expiry dates */}
           <div className="flex gap-2">
+            <Label htmlFor="Purchase Date" value="Purchase Date" />
             <Datepicker
               placeholder="Purchase Date"
               onSelectedDateChanged={(date) =>
@@ -216,6 +220,7 @@ export default function AddSupply({ openModal, setOpenModal, onSupplyAdded }) {
                 }))
               }
             />
+            <Label htmlFor="Expiry Date" value="Expiry Date" />
             <Datepicker
               placeholder="Expiry Date"
               onSelectedDateChanged={(date) =>
