@@ -39,12 +39,10 @@ const supplySchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    itemCode: [{ type: String, required: true }],itemCode: [{ type: String, required: true }],
+    itemCode: [{ type: String, required: true }],
   },
   { timestamps: true }
 );
 
 const Supply = mongoose.model("Supply", supplySchema);
-export default Supply;
-
 export default Supply;
