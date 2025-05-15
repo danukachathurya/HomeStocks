@@ -5,7 +5,8 @@ import {
   getProduct,
   updateProduct,
   deleteProduct,
-  searchProductsByName
+  searchProductsByName,
+  getProductCount 
 } from '../controllers/product.controller.js';
 
 
@@ -15,6 +16,8 @@ router.get('/search', searchProductsByName);
 
 // Add a new product (admin only)
 router.post('/add', addProduct);
+
+router.get('/count', getProductCount);
 
 // Get all products (public or restricted depending on your logic)
 router.get('/all', getProducts);

@@ -11,6 +11,10 @@ const inventorySchema = new mongoose.Schema(
     purchaseDate: Date,
     expiryDate: Date,
     itemCode: [String],
+    marked: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

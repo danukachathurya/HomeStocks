@@ -5,13 +5,16 @@ import {
   getSupplies, 
   getSupply, 
   updateSupply, 
-  deleteSupply 
+  deleteSupply,
+  getUniqueSupplierCount  
 } from '../controllers/supply.controller.js';
 
 const router = express.Router();
 
 // Add a new supply
-router.post('/add', verifyToken, addSupply);
+router.post('/add', addSupply);
+
+router.get('/supplier-count', getUniqueSupplierCount);
 
 // Get all supplies with pagination & search
 router.get('/all', getSupplies);
@@ -20,9 +23,9 @@ router.get('/all', getSupplies);
 router.get('/:supplyId', getSupply);
 
 // Update supply
-router.put('/update/:supplyId/:userId', verifyToken, updateSupply);
+router.put('/update/:supplyId/:userId', updateSupply);
 
 // Delete supply
-router.delete('/delete/:supplyId/:userId', verifyToken, deleteSupply);
+router.delete('/delete/:supplyId/:userId', deleteSupply);
 
 export default router;

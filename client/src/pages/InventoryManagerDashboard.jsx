@@ -19,9 +19,10 @@ import Product from "./Product";
 import DashProfile from "../components/DashProfile";
 import ExpireSoon from "../pages/ExpireSoon";
 import ExpiredProduct from "../pages/ExpiredProduct";
-import HighDemand from "../pages/HighDemand";
 import DisposalItems from "../pages/DisposalItems";
 import DisposeDetails from "../pages/DisposeDetails";
+import UpcomingOrders from "./UpcomingOrders";
+import InventoryOverview from "./InventoryOverview";
 
 export default function InventoryManagerDashboard() {
   const dispatch = useDispatch();
@@ -87,7 +88,9 @@ export default function InventoryManagerDashboard() {
               as="div"
               onClick={() => setActiveTab("expire-soon")}
               className={
-                activeTab === "expire-soon" ? "bg-gray-200 dark:bg-gray-700" : ""
+                activeTab === "expire-soon"
+                  ? "bg-gray-200 dark:bg-gray-700"
+                  : ""
               }
             >
               Expire Soon
@@ -97,20 +100,25 @@ export default function InventoryManagerDashboard() {
               as="div"
               onClick={() => setActiveTab("expired-products")}
               className={
-                activeTab === "expired-products" ? "bg-gray-200 dark:bg-gray-700" : ""
+                activeTab === "expired-products"
+                  ? "bg-gray-200 dark:bg-gray-700"
+                  : ""
               }
             >
               Expired Products
             </Sidebar.Item>
+
             <Sidebar.Item
-              icon={HiTrendingUp}
+              icon={HiClipboardList}
               as="div"
-              onClick={() => setActiveTab("high-demand")}
+              onClick={() => setActiveTab("upcoming-orders")}
               className={
-                activeTab === "high-demand" ? "bg-gray-200 dark:bg-gray-700" : ""
+                activeTab === "upcoming-orders"
+                  ? "bg-gray-200 dark:bg-gray-700"
+                  : ""
               }
             >
-              Demand Products
+              Upcoming Orders
             </Sidebar.Item>
             <Sidebar.Item
               icon={HiTrash}
@@ -127,7 +135,9 @@ export default function InventoryManagerDashboard() {
               as="div"
               onClick={() => setActiveTab("show-disposal")}
               className={
-                activeTab === "show-disposal" ? "bg-gray-200 dark:bg-gray-700" : ""
+                activeTab === "show-disposal"
+                  ? "bg-gray-200 dark:bg-gray-700"
+                  : ""
               }
             >
               Show Disposal
@@ -144,10 +154,13 @@ export default function InventoryManagerDashboard() {
         <h1 className="text-2xl font-bold mb-4">Inventory Manager Dashboard</h1>
 
         {activeTab === "overview" && (
-          <p className="text-gray-700">
-            Hello <strong>{currentUser?.username}</strong>! Welcome to your
-            inventory manager dashboard.
-          </p>
+          <div>
+            <p className="text-gray-700">
+              Hello <strong>{currentUser?.username}</strong>! Welcome to your
+              inventory manager dashboard.
+            </p>
+            <InventoryOverview />
+          </div>
         )}
 
         {activeTab === "profile" && (
@@ -174,9 +187,9 @@ export default function InventoryManagerDashboard() {
           </div>
         )}
 
-        {activeTab === "high-demand" && (
+        {activeTab === "upcoming-orders" && (
           <div>
-            <HighDemand />
+            <UpcomingOrders />
           </div>
         )}
 
