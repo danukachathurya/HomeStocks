@@ -93,3 +93,13 @@ export const searchProductsByName = async (req, res, next) => {
     next(errorHandler(500, "Search failed"));
   }
 };
+
+// Get total product count
+export const getProductCount = async (req, res, next) => {
+  try {
+    const count = await Product.countDocuments();
+    res.status(200).json({ count });
+  } catch (error) {
+    next(errorHandler(500, "Failed to get product count"));
+  }
+};

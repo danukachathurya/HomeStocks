@@ -4,7 +4,8 @@ import {
   getDisposalItems,
   getDisposalItem,
   updateDisposalItem,
-  deleteDisposalItem
+  deleteDisposalItem,
+  getDisposalCount 
 } from '../controllers/disposal.controller.js';
 
 import { protect, adminOnly } from '../middleware/authmiddleware.js';
@@ -12,6 +13,8 @@ import { protect, adminOnly } from '../middleware/authmiddleware.js';
 const router = express.Router();
 
 router.post('/add', addDisposalItem);
+
+router.get('/count', getDisposalCount);
 
 router.get('/all', getDisposalItems);
 

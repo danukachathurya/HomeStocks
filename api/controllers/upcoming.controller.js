@@ -30,3 +30,14 @@ export const markOrder = async (req, res, next) => {
     next(errorHandler(500, "Failed to mark order"));
   }
 };
+
+// Get total count of upcoming orders
+export const getUpcomingOrdersCount = async (req, res, next) => {
+  try {
+    const count = await Inventory.countDocuments(); // counts all documents
+    res.status(200).json({ count });
+  } catch (error) {
+    next(errorHandler(500, "Failed to get upcoming orders count"));
+  }
+};
+

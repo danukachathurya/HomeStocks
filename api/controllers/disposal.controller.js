@@ -79,3 +79,13 @@ export const deleteDisposalItem = async (req, res, next) => {
     next(error);
   }
 };
+
+// Get total disposal count
+export const getDisposalCount = async (req, res, next) => {
+  try {
+    const count = await Disposal.countDocuments();
+    res.status(200).json({ count });
+  } catch (error) {
+    next(errorHandler(500, "Failed to get disposal count"));
+  }
+};

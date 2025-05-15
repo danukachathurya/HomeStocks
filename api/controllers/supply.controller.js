@@ -61,3 +61,27 @@ export const deleteSupply = async (req, res, next) => {
     next(error);
   }
 };
+
+// Get total unique supplier count
+export const getUniqueSupplierCount = async (req, res, next) => {
+  try {
+    const result = await Supply.aggregate([
+      { 
+        $group: { 
+          _id: "$supplierName" 
+        } 
+      },
+      { 
+        $count: "uniqueSupplierCount" 
+      }
+    ]);
+
+    // If no suppliers, result could be empty array
+    const count = result.length > 0 ? result[0].uniqueSupplierCount : 0;
+
+    res.status(200).json({ count });
+  } catch (error) {
+    next(errorHandler(500, "Failed to get unique supplier count"));
+  }
+};
+
