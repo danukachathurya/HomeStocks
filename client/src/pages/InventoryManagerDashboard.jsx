@@ -19,7 +19,6 @@ import Product from "./Product";
 import DashProfile from "../components/DashProfile";
 import ExpireSoon from "../pages/ExpireSoon";
 import ExpiredProduct from "../pages/ExpiredProduct";
-import HighDemand from "../pages/HighDemand";
 import DisposalItems from "../pages/DisposalItems";
 import DisposeDetails from "../pages/DisposeDetails";
 import UpcomingOrders from "./UpcomingOrders";
@@ -103,16 +102,7 @@ export default function InventoryManagerDashboard() {
             >
               Expired Products
             </Sidebar.Item>
-            <Sidebar.Item
-              icon={HiTrendingUp}
-              as="div"
-              onClick={() => setActiveTab("high-demand")}
-              className={
-                activeTab === "high-demand" ? "bg-gray-200 dark:bg-gray-700" : ""
-              }
-            >
-              Demand Products
-            </Sidebar.Item>
+
             <Sidebar.Item
               icon={HiClipboardList}
               as="div"
@@ -182,12 +172,6 @@ export default function InventoryManagerDashboard() {
         {activeTab === "expired-products" && (
           <div>
             <ExpiredProduct />
-          </div>
-        )}
-
-        {activeTab === "high-demand" && (
-          <div>
-            <HighDemand />
           </div>
         )}
 
