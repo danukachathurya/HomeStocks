@@ -10,14 +10,6 @@ import {
   HiClipboardList,
   HiUserAdd,
   HiTrendingUp,
-  HiTrash,
-  HiEye,
-  HiChartPie,
-  HiTrendingUp,
-  HiOutlineUserGroup,
-  HiClock,
-  HiUser,
-  HiOutlineBan,
 } from "react-icons/hi";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
@@ -49,7 +41,7 @@ const roleTabs = {
   user: [
     { key: "overview", label: "Overview", icon: HiHome },
     { key: "myItems", label: "My Items", icon: HiBookmark },
-    { key: "addPayment", label: "Add Payment", icon: HiTrendingUp }, // ✅ Added
+    { key: "addPayment", label: "Add Payment", icon: HiTrendingUp },
     { key: "profile", label: "Your Profile", icon: HiOutlineUserCircle },
     { key: "settings", label: "Settings", icon: HiCog },
   ],
@@ -104,11 +96,10 @@ export default function DashSidebar({ role, activeTab, setActiveTab, onSignOut }
             </Sidebar.Item>
           ))}
 
-          <Sidebar.Item icon={HiArrowSmRight} as="div" onClick={onSignOut}>
           <Sidebar.Item
             icon={HiArrowSmRight}
             className="cursor-pointer"
-            onClick={handleSignout}
+            onClick={handleSignOut}
           >
             Sign Out
           </Sidebar.Item>
