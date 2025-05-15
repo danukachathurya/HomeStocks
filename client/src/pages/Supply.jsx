@@ -3,6 +3,8 @@ import { Button, Table, TextInput } from "flowbite-react";
 import AddSupply from "../pages/AddSupply"; 
 import { useSelector } from 'react-redux';
 import EditSupply from "../pages/EditSupply";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable"; // ✅ Required for PDF table generation
 
 export default function Supply() {
   const [supplys, setSupplys] = useState([]);
@@ -49,16 +51,58 @@ export default function Supply() {
     setOpenEditModal(true); 
   };
 
+  const handleDownloadPdf = () => {
+    const doc = new jsPDF();
+
+    const dateStr = new Date().toLocaleDateString();
+    doc.setFontSize(18);
+    doc.text("Supplies Report", 14, 20);
+
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${dateStr}`, 14, 28);
+
+    const filteredSupplys = supplys.filter((supply) => {
+      const itemName = supply.itemName?.toLowerCase() || '';
+      const supplierName = supply.supplierName?.toLowerCase() || '';
+      const query = search.trim().toLowerCase();
+      return itemName.includes(query) || supplierName.includes(query);
+    });
+
+    const tableData = filteredSupplys.map(supply => [
+      supply.itemName,
+      supply.supplierName,
+      `$${supply.price}`,
+      supply.quantity,
+      new Date(supply.expiryDate).toISOString().split('T')[0]
+    ]);
+
+    autoTable(doc, {
+      startY: 35,
+      head: [["Item Name", "Supplier", "Price", "Quantity", "Expiry Date"]],
+      body: tableData,
+      theme: "striped",
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [0, 123, 189] }
+    });
+
+    doc.save(`supplies-report-${Date.now()}.pdf`);
+  };
+
   return (
     <div className="p-5 max-w-5xl mx-auto">
-      <div className="flex justify-between items-center mb-5">
+      <div className="flex justify-between items-center mb-5 gap-3 flex-wrap">
         <h1 className="text-3xl font-bold">Supplies</h1>
-        <Button onClick={() => setOpenAddModal(true)}>Add Supplies</Button>
+        <div className="flex gap-2">
+          <Button onClick={handleDownloadPdf} color="gray">Download List</Button>
+          <Button onClick={() => setOpenAddModal(true)}>Add Supplies</Button>
+        </div>
       </div>
 
       <TextInput
-        placeholder="Search..."
+        placeholder="Search by item or supplier name..."
         className="mb-5"
+        value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
 
@@ -76,26 +120,22 @@ export default function Supply() {
             {supplys && supplys.length > 0 ? (
               supplys
                 .filter((supply) => {
-                  return (
-                    supply.itemName.toLowerCase().includes(search.toLowerCase()) ||
-                    supply.supplierName.toLowerCase().includes(search.toLowerCase())
-                  );
+                  const itemName = supply.itemName?.toLowerCase() || '';
+                  const supplierName = supply.supplierName?.toLowerCase() || '';
+                  const query = search.trim().toLowerCase();
+                  return itemName.includes(query) || supplierName.includes(query);
                 })
                 .map((supply) => (
-                  <Table.Row
-                    key={supply._id}
-                    className="bg-white border-b hover:bg-gray-100 transition-colors duration-200"
-                  >
-                    <Table.Cell className="py-3 px-7">{supply.itemName}</Table.Cell>
-                    <Table.Cell className="py-3 px-7">{supply.supplierName}</Table.Cell>
-                    <Table.Cell className="py-3 px-7">${supply.price}</Table.Cell>
-                    <Table.Cell className="py-3 px-7">{supply.quantity}</Table.Cell>
-                    <Table.Cell className="py-3 px-7">{new Date(supply.expiryDate).toISOString().split('T')[0]}</Table.Cell>
-                    <Table.Cell className="py-3 px-7 flex gap-2">
+                  <Table.Row key={supply._id}>
+                    <Table.Cell>{supply.itemName}</Table.Cell>
+                    <Table.Cell>{supply.supplierName}</Table.Cell>
+                    <Table.Cell>${supply.price}</Table.Cell>
+                    <Table.Cell>{supply.quantity}</Table.Cell>
+                    <Table.Cell>{new Date(supply.expiryDate).toISOString().split('T')[0]}</Table.Cell>
+                    <Table.Cell className="flex gap-2">
                       <Button
                         color="failure"
                         size="xs"
-                        className="uppercase text-sm" 
                         onClick={() => handleDelete(supply._id)}
                       >
                         Delete
@@ -103,21 +143,17 @@ export default function Supply() {
                       <Button
                         color="blue"
                         size="xs"
-                        className="uppercase text-sm text-white"
-                        onClick={() => handleEdit(supply)} 
+                        onClick={() => handleEdit(supply)}
                       >
                         Edit
                       </Button>
                     </Table.Cell>
-                    <Table.Cell className="py-3 px-7 hidden">{supply.category}</Table.Cell>
-                    <Table.Cell className="py-3 px-7 hidden">{supply.itemImage}</Table.Cell>
-                    <Table.Cell className="py-3 px-7 hidden">{new Date(supply.purchaseDate).toISOString().split('T')[0]}</Table.Cell>
                   </Table.Row>
                 ))
             ) : (
               <Table.Row>
                 <Table.Cell colSpan="6" className="text-center py-4">
-                  No supplys found.
+                  No supplies found.
                 </Table.Cell>
               </Table.Row>
             )}
@@ -135,8 +171,8 @@ export default function Supply() {
         <EditSupply
           openModal={openEditModal}
           setOpenModal={setOpenEditModal}
-          supply={supplyToEdit} 
-          onSupplyUpdated={fetchSupplys} 
+          supply={supplyToEdit}
+          onSupplyUpdated={fetchSupplys}
         />
       )}
     </div>

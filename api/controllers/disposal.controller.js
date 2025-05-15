@@ -1,10 +1,33 @@
 import Disposal from "../models/disposal.model.js"; 
+import Product from "../models/product.model.js";
 import { errorHandler } from "../utils/error.js";
 
 export const addDisposalItem = async (req, res, next) => {
   try {
+    // First find the product that contains these item codes
+    const product = await Product.findOne({
+      itemCode: { $in: Array.isArray(req.body.itemCode) ? req.body.itemCode : [req.body.itemCode] }
+    });
+
+    if (!product) {
+      return next(errorHandler(404, "Original product not found!"));
+    }
+
+    // Create the disposal item
     const newDisposalItem = new Disposal(req.body);
     const savedDisposalItem = await newDisposalItem.save();
+
+    // Remove the disposed item codes from the original product
+    const codesToRemove = Array.isArray(req.body.itemCode) ? req.body.itemCode : [req.body.itemCode];
+    const remainingCodes = product.itemCode.filter(code => !codesToRemove.includes(code));
+
+    // Update the product with remaining codes
+    await Product.findByIdAndUpdate(
+      product._id,
+      { $set: { itemCode: remainingCodes } },
+      { new: true }
+    );
+
     res.status(201).json(savedDisposalItem);
   } catch (error) {
     next(error);
@@ -54,5 +77,15 @@ export const deleteDisposalItem = async (req, res, next) => {
     res.status(200).json("Disposal item deleted successfully");
   } catch (error) {
     next(error);
+  }
+};
+
+// Get total disposal count
+export const getDisposalCount = async (req, res, next) => {
+  try {
+    const count = await Disposal.countDocuments();
+    res.status(200).json({ count });
+  } catch (error) {
+    next(errorHandler(500, "Failed to get disposal count"));
   }
 };

@@ -26,7 +26,7 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    itemCode: [{ type: String, required: true }],itemCode: [{ type: String, required: true }],
+    itemCode: [{ type: String, required: true }],
     purchaseDate: {
       type: Date,
       required: true,

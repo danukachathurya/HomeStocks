@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Button, TextInput, Modal, Alert, FileInput, Datepicker } from 'flowbite-react';
-import ReactQuill from 'react-quill';
+import { Button, TextInput, Modal, Alert, FileInput, Datepicker, Label } from 'flowbite-react';
 import 'react-quill/dist/quill.snow.css';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -13,7 +12,7 @@ const EditSupply = ({ openModal, setOpenModal, supply, onSupplyUpdated }) => {
     itemName: '',
     supplierName: '',
     price: '',
-    quantity: '',
+    quantity: '', 
     purchaseDate: '',
     expiryDate: '',
     itemImage: '',
@@ -24,6 +23,35 @@ const EditSupply = ({ openModal, setOpenModal, supply, onSupplyUpdated }) => {
   const [uploadError, setUploadError] = useState('');
   const [submitError, setSubmitError] = useState('');
   const quillRef = useRef(null);
+
+  const validateForm = () => {
+    const requiredFields = [
+      "category",
+      "supplierName",
+      "itemName",
+      "price",
+      "itemImage",
+      "quantity",
+      "purchaseDate",
+      "expiryDate",
+    ];
+
+    for (let field of requiredFields) {
+      if (!formData[field] || formData[field].toString().trim() === "") {
+        return `All fields are required.`;
+      }
+    }
+
+    if (isNaN(formData.price) || parseFloat(formData.price) <= 0) {
+      return "Price must be a valid number greater than 0.";
+    }
+
+    if (!Number.isInteger(Number(formData.quantity)) || formData.quantity <= 0) {
+      return "Quantity must be a valid integer greater than 0.";
+    }
+
+    return null;
+  };
 
   useEffect(() => {
     if (supply) {
@@ -65,37 +93,45 @@ const EditSupply = ({ openModal, setOpenModal, supply, onSupplyUpdated }) => {
     }
   };
 
-  const handleEdit = async () => {
-    try {
-      const userId = JSON.parse(localStorage.getItem('user'))?._id;
-  
-      const res = await fetch(`/api/supply/update/${supply._id}/${userId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-  
-      const data = await res.json();
-  
-      if (res.ok) {
-        onSupplyUpdated();  
-        setOpenModal(false);  
-  
-        navigate('/dashboard?tab=supplys'); 
-      } else {
-        setSubmitError(data.error || "Failed to update supply.");
-      }
-    } catch (error) {
-      console.error('Error editing supply:', error);
-      setSubmitError('Something went wrong while updating the supply.');
+  const handleEdit = async (e) => {
+  e.preventDefault();  // This is essential!
+  const validationError = validateForm();
+  if (validationError) {
+    setSubmitError(validationError);
+    return;
+  }
+
+  try {
+    const userId = JSON.parse(localStorage.getItem('user'))?._id;
+
+    const res = await fetch(`/api/supply/update/${supply._id}/${userId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      onSupplyUpdated();
+      setOpenModal(false);
+      navigate('/supplier-dashboard');
+    } else {
+      setSubmitError(data.error || "Failed to update supply.");
     }
-  };  
+  } catch (error) {
+    console.error('Error editing supply:', error);
+    setSubmitError('Something went wrong while updating the supply.');
+  }
+};
+
   
   return (
     <Modal show={openModal} onClose={() => setOpenModal(false)}>
       <Modal.Header>Edit Supply</Modal.Header>
       <Modal.Body>
         <form className="flex flex-col gap-3" onSubmit={handleEdit}>
+          <Label htmlFor="category" value="Category" />
           <TextInput
             placeholder="Category"
             id="category"
@@ -105,6 +141,7 @@ const EditSupply = ({ openModal, setOpenModal, supply, onSupplyUpdated }) => {
               setFormData((prev) => ({ ...prev, category: e.target.value }))
             }
           />
+          <Label htmlFor="Supplier Name" value="Supplier Name" />
           <TextInput
             placeholder="Supplier Name"
             id="supplierName"
@@ -114,6 +151,7 @@ const EditSupply = ({ openModal, setOpenModal, supply, onSupplyUpdated }) => {
               setFormData((prev) => ({ ...prev, supplierName: e.target.value }))
             }
           />
+          <Label htmlFor="Item Name" value="Item Name" />
           <TextInput
             placeholder="Item Name"
             id="itemName"
@@ -123,6 +161,7 @@ const EditSupply = ({ openModal, setOpenModal, supply, onSupplyUpdated }) => {
               setFormData((prev) => ({ ...prev, itemName: e.target.value }))
             }
           />
+          <Label htmlFor="Price" value="Price" />
           <TextInput
             placeholder="Price"
             id="price"
@@ -133,7 +172,7 @@ const EditSupply = ({ openModal, setOpenModal, supply, onSupplyUpdated }) => {
               setFormData((prev) => ({ ...prev, price: e.target.value }))
             }
           />
-
+          <Label htmlFor="Add Image" value="Add Image" />
           <div className="flex gap-2 items-center">
             <FileInput
               accept="image/*"
@@ -164,7 +203,7 @@ const EditSupply = ({ openModal, setOpenModal, supply, onSupplyUpdated }) => {
               className="h-32 object-cover rounded"
             />
           )}
-
+          <Label htmlFor="Quantity" value="Quantity" />
           <TextInput
             placeholder="Quantity"
             id="quantity"
@@ -177,6 +216,7 @@ const EditSupply = ({ openModal, setOpenModal, supply, onSupplyUpdated }) => {
           />
 
           <div className="flex gap-2">
+            <Label htmlFor="Purchase Date" value="Purchase Date" />
             <Datepicker
               placeholder="Purchase Date"
               id="purchaseDate"
@@ -185,6 +225,7 @@ const EditSupply = ({ openModal, setOpenModal, supply, onSupplyUpdated }) => {
                 setFormData((prev) => ({ ...prev, purchaseDate: date }))
               }
             />
+            <Label htmlFor="Expiry Date" value="Expiry Date" />
             <Datepicker
               placeholder="Expiry Date"
               id="expiryDate"

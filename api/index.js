@@ -7,6 +7,8 @@ import adminRoutes from "./routes/admin.route.js";
 import productRoutes from "./routes/product.route.js"; 
 import disposalRoutes from "./routes/disposal.route.js"; 
 import checkoutRoutes from "./routes/checkout.route.js"; 
+import upcomingRoutes from "./routes/upcoming.route.js";
+import supplyRoutes from "./routes/supply.route.js";
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
@@ -34,8 +36,10 @@ app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/product', productRoutes);
+app.use('/api/supply', supplyRoutes);
 app.use('/api/disposal', disposalRoutes);
 app.use('/api/checkout', checkoutRoutes);  // New route for checkout
+app.use('/api/upcoming', upcomingRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

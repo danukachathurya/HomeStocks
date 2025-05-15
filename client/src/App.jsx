@@ -15,11 +15,6 @@ import UserDashboard from "./pages/UserDashboard";
 import ScrollToTop from "./components/ScrollToTop";
 
 import Search from "./pages/Search";
-import AddProduct from "./pages/AddProduct";
-import Product from "./pages/Product";
-import DisposalItems from "./pages/DisposalItems";
-import DisposeDetails from "./pages/DisposeDetails";
-import ExpireSoon from "./pages/ExpireSoon";
 
 export default function App() {
   return (
@@ -72,6 +67,8 @@ export default function App() {
           }
         />
 
+        <Route path="/search" element={<Search />} />
+        <Route path="*" element={<h1 className="text-center mt-10 text-3xl">404 - Page Not Found</h1>} />
       </Routes>
       <Footer />
     </BrowserRouter>

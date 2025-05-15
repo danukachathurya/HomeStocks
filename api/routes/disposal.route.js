@@ -1,19 +1,27 @@
 import express from 'express';
-import { verifyToken } from '../utils/verifyUser.js'; 
 import {
   addDisposalItem,
   getDisposalItems,
   getDisposalItem,
   updateDisposalItem,
-  deleteDisposalItem
-} from '../controllers/disposal.controller.js'; 
+  deleteDisposalItem,
+  getDisposalCount 
+} from '../controllers/disposal.controller.js';
+
+import { protect, adminOnly } from '../middleware/authmiddleware.js';
 
 const router = express.Router();
 
-router.post('/add', verifyToken, addDisposalItem);
+router.post('/add', addDisposalItem);
+
+router.get('/count', getDisposalCount);
+
 router.get('/all', getDisposalItems);
-router.get('/:disposalId', getDisposalItem);
-router.put('/update/:disposalId/:userId', verifyToken, updateDisposalItem);
-router.delete('/delete/:disposalId/:userId', verifyToken, deleteDisposalItem);
+
+router.get('/:disposalId', protect, adminOnly, getDisposalItem);
+
+router.put('/update/:disposalId', protect, adminOnly, updateDisposalItem);
+
+router.delete('/delete/:disposalId', protect, adminOnly, deleteDisposalItem);
 
 export default router;

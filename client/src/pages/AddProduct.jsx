@@ -8,8 +8,8 @@ import {
   Label,
 } from "flowbite-react";
 import { useState, useRef } from "react";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill";
 import {
   getStorage,
   ref,
@@ -112,38 +112,42 @@ export default function AddProduct({ openModal, setOpenModal, onProductAdded }) 
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const validationError = validateForm();
-    if (validationError) {
-      setSubmitError(validationError);
+  e.preventDefault();
+  const validationError = validateForm();
+  if (validationError) {
+    setSubmitError(validationError);
+    return;
+  }
+
+  const itemCodeArray = Array.from(
+    { length: itemCodeEnd - itemCodeStart + 1 },
+    (_, i) => (parseInt(itemCodeStart) + i).toString()
+  );
+
+  const finalData = { ...formData, itemCode: itemCodeArray };
+
+  try {
+    const res = await fetch("/api/product/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // <--- important for sending cookies
+      body: JSON.stringify(finalData),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setSubmitError(data.message || "Server error.");
       return;
     }
+    setSubmitError(null);
+    onProductAdded();
+    setOpenModal(false);
+  } catch {
+    setSubmitError("Something went wrong. Please try again.");
+  }
+};
 
-    const itemCodeArray = Array.from(
-      { length: itemCodeEnd - itemCodeStart + 1 },
-      (_, i) => (parseInt(itemCodeStart) + i).toString()
-    );
-
-    const finalData = { ...formData, itemCode: itemCodeArray };
-
-    try {
-      const res = await fetch("/api/product/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(finalData),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setSubmitError(data.message || "Server error.");
-        return;
-      }
-      setSubmitError(null);
-      onProductAdded();
-      setOpenModal(false);
-    } catch {
-      setSubmitError("Something went wrong. Please try again.");
-    }
-  };
 
   return (
     <Modal show={openModal} onClose={() => setOpenModal(false)}>

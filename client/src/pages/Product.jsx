@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button, Table, TextInput } from "flowbite-react";
-import AddProduct from "../pages/AddProduct"; 
+import AddProduct from "../pages/AddProduct";
 import { useSelector } from 'react-redux';
 import EditProduct from "../pages/EditProduct";
 
@@ -8,7 +8,7 @@ export default function Product() {
   const [products, setProducts] = useState([]);
   const { currentUser } = useSelector((state) => state.user);
   const [search, setSearch] = useState("");
-  const [openAddModal, setOpenAddModal] = useState(false);  
+  const [openAddModal, setOpenAddModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [productToEdit, setProductToEdit] = useState(null);
 
@@ -28,26 +28,31 @@ export default function Product() {
 
   const handleDelete = async (productId) => {
     try {
-      const res = await fetch(`/api/product/delete/${productId}/${currentUser._id}`, {
+      const res = await fetch(`/api/product/delete/${productId}`, {
         method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${currentUser.token}`,
+        },
       });
       const data = await res.json();
       if (data.success === false) {
         console.log(data.message);
         return;
       }
-      setProducts((prev) =>
-        prev.filter((product) => product._id !== productId)
-      );
+      setProducts((prev) => prev.filter((product) => product._id !== productId));
     } catch (error) {
       console.log(error.message);
     }
   };
 
   const handleEdit = (product) => {
-    setProductToEdit(product); 
-    setOpenEditModal(true); 
+    setProductToEdit(product);
+    setOpenEditModal(true);
   };
+
+  const filteredProducts = products.filter((product) =>
+    product.itemName.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="p-5 max-w-5xl mx-auto">
@@ -73,8 +78,8 @@ export default function Product() {
             <Table.HeadCell className="text-lg font-semibold">Action</Table.HeadCell>
           </Table.Head>
           <Table.Body>
-            {products && products.length > 0 ? (
-              products.map((product) => (
+            {filteredProducts && filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => (
                 <Table.Row
                   key={product._id}
                   className="bg-white border-b hover:bg-gray-100 transition-colors duration-200"
@@ -88,7 +93,7 @@ export default function Product() {
                     <Button
                       color="failure"
                       size="xs"
-                      className="uppercase text-sm" 
+                      className="uppercase text-sm"
                       onClick={() => handleDelete(product._id)}
                     >
                       Delete
@@ -97,7 +102,7 @@ export default function Product() {
                       color="blue"
                       size="xs"
                       className="uppercase text-sm text-white"
-                      onClick={() => handleEdit(product)} 
+                      onClick={() => handleEdit(product)}
                     >
                       Edit
                     </Button>
@@ -129,9 +134,9 @@ export default function Product() {
       <EditProduct
         openModal={openEditModal}
         setOpenModal={setOpenEditModal}
-        product={productToEdit} 
-        onProductUpdated={fetchProducts} 
+        product={productToEdit}
+        onProductUpdated={fetchProducts}
       />
     </div>
   );
-}  
+}
