@@ -4,6 +4,9 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import Supply from "../models/supply.model.js";
 import Inventory from "../models/inventory.model.js";
+import Product from "../models/product.model.js";
+import Checkout from "../models/checkout.model.js";
+
 
 const allowedRoles = ['inventorymanager', 'supplier', 'user'];
 
@@ -140,18 +143,175 @@ export const addToInventory = async (req, res, next) => {
       return next(errorHandler(400, "Invalid quantity provided."));
     }
 
-    const existing = await Inventory.findOne({ itemCode: { $in: supplyItem.itemCode } });
-    if (existing) return next(errorHandler(409, "Item already in inventory."));
+    // Destructure needed fields for comparison
+    const { itemName, supplierName, category } = supplyItem;
 
-    const newItem = new Inventory({
-      ...supplyItem._doc,
-      quantity: finalQty,
+    // Check for existing item with exact match on name, supplier, and category
+    const existingInventory = await Inventory.findOne({
+      itemName,
+      supplierName,
+      category,
     });
 
-    await newItem.save();
+    if (existingInventory) {
+      // Update quantity only
+      existingInventory.quantity += finalQty;
+      await existingInventory.save();
+    } else {
+      // Remove _id and save as new inventory item
+      const supplyData = supplyItem.toObject();
+      delete supplyData._id;
+      delete supplyData.__v;
 
-    res.status(201).json({ message: "Item added to inventory with selected quantity." });
+      const newItem = new Inventory({
+        ...supplyData,
+        quantity: finalQty,
+      });
+
+      await newItem.save();
+    }
+
+    // Update or delete supply item
+    if (finalQty === supplyItem.quantity) {
+      await Supply.findByIdAndDelete(supplyId);
+    } else {
+      supplyItem.quantity -= finalQty;
+      await supplyItem.save();
+    }
+
+    res.status(201).json({ message: "Item added to inventory successfully." });
   } catch (err) {
     next(err);
   }
 };
+
+
+// Get total user count (Admin only)
+export const getUserCount = async (req, res, next) => {
+  try {
+    if (!req.user?.isAdmin) {
+      return next(errorHandler(403, 'Only admins can view user count.'));
+    }
+
+    const count = await User.countDocuments();
+    res.status(200).json({ totalUsers: count });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//get all inventories item count
+export const getInventoryCount = async (req, res, next) => {
+  try {
+    if (!req.user?.isAdmin) {
+      return res.status(403).json({ message: 'Only admins can view inventory count.' });
+    }
+
+    const count = await Inventory.countDocuments();
+    res.status(200).json({ totalInventories: count });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get total product count (Admin only)
+export const getProductCount = async (req, res, next) => {
+  try {
+    if (!req.user?.isAdmin) {
+      return next(errorHandler(403, 'Only admins can view product count.'));
+    }
+
+    const count = await Product.countDocuments();
+    res.status(200).json({ totalProducts: count });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get total supply items count (Admin only)
+export const getSupplyCount = async (req, res, next) => {
+  try {
+    if (!req.user?.isAdmin) {
+      return res.status(403).json({ message: 'Only admins can view supply count.' });
+    }
+
+    const count = await Supply.countDocuments();
+    res.status(200).json({ totalSupplies: count });
+  } catch (error) {
+    console.error("Error fetching supply count:", error);
+    next(error);
+  }
+};
+
+
+// Get total quantity of items sold in the current month
+export const getMonthlySalesCount = async (req, res, next) => {
+  try {
+    if (!req.user?.isAdmin) {
+      return res.status(403).json({ message: 'Only admins can view monthly sales count.' });
+    }
+
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    const checkouts = await Checkout.find({
+      createdAt: {
+        $gte: firstDayOfMonth,
+        $lte: lastDayOfMonth
+      }
+    });
+
+    // Sum total quantity of items in all cartItems arrays
+    let totalItemsSold = 0;
+    checkouts.forEach((checkout) => {
+      if (Array.isArray(checkout.cartItems)) {
+        checkout.cartItems.forEach(item => {
+          totalItemsSold += item.quantity || 1; // fallback to 1 if quantity is missing
+        });
+      }
+    });
+
+    res.status(200).json({ monthlySalesCount: totalItemsSold });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+// Get total income in the current month
+export const getMonthlyIncome = async (req, res, next) => {
+  try {
+    if (!req.user?.isAdmin) {
+      return res.status(403).json({ message: 'Only admins can view monthly income.' });
+    }
+
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    const checkouts = await Checkout.find({
+      createdAt: {
+        $gte: firstDayOfMonth,
+        $lte: lastDayOfMonth
+      }
+    });
+
+    // Sum up all totalPrice fields
+    const monthlyIncome = checkouts.reduce((sum, checkout) => {
+      return sum + (checkout.totalPrice || 0);
+    }, 0);
+
+    res.status(200).json({ monthlyIncome });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+
+
+
+
+

@@ -9,6 +9,7 @@ import {
   HiArrowSmRight,
   HiClipboardList,
   HiUserAdd,
+  HiTrendingUp,
   HiTrash,
   HiEye,
   HiChartPie,
@@ -31,7 +32,7 @@ const roleTabs = {
     { key: "manageUsers", label: "Manage Users", icon: HiUserGroup },
     { key: "assignRoles", label: "Assign Roles", icon: HiUserAdd },
     { key: "profile", label: "Your Profile", icon: HiOutlineUserCircle },
-    { key: "suppliersOrder", label: "Suppliers Order", icon: HiClipboardList }, 
+    { key: "suppliersOrder", label: "Suppliers Order", icon: HiClipboardList },
   ],
   supplier: [
     { key: "overview", label: "Overview", icon: HiHome },
@@ -48,6 +49,7 @@ const roleTabs = {
   user: [
     { key: "overview", label: "Overview", icon: HiHome },
     { key: "myItems", label: "My Items", icon: HiBookmark },
+    { key: "addPayment", label: "Add Payment", icon: HiTrendingUp }, // ✅ Added
     { key: "profile", label: "Your Profile", icon: HiOutlineUserCircle },
     { key: "settings", label: "Settings", icon: HiCog },
   ],
@@ -85,13 +87,15 @@ export default function DashSidebar({ role, activeTab, setActiveTab, onSignOut }
   };
 
   return (
-    <Sidebar aria-label="Dashboard Sidebar" className="w-64">
+    <Sidebar aria-label="Dashboard Sidebar" className="w-64 min-h-screen">
       <Sidebar.Items>
         <Sidebar.ItemGroup>
           {tabs.map((tab) => (
             <Sidebar.Item
               key={tab.key}
               icon={tab.icon}
+              active={activeTab === tab.key}
+
               as="div"
               onClick={() => setActiveTab(tab.key)}
               className={activeTab === tab.key ? "bg-gray-200 dark:bg-gray-700" : ""}
@@ -99,6 +103,8 @@ export default function DashSidebar({ role, activeTab, setActiveTab, onSignOut }
               {tab.label}
             </Sidebar.Item>
           ))}
+
+          <Sidebar.Item icon={HiArrowSmRight} as="div" onClick={onSignOut}>
           <Sidebar.Item
             icon={HiArrowSmRight}
             className="cursor-pointer"

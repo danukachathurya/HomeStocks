@@ -1,6 +1,7 @@
 import { errorHandler } from "../utils/error.js";
 import bcryptjs from "bcryptjs";
 import User from "../models/user.model.js";
+import Product from "../models/product.model.js";
 
 export const test = (req, res) => {
   res.json({ message: "API is Working" });
@@ -89,3 +90,5 @@ export const getUser = async (req, res, next) => {
     next(error);
   }
 };
+
+
