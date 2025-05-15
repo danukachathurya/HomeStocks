@@ -13,6 +13,7 @@ import { getInventoryCount } from '../controllers/admin.controller.js';
 import { getProductCount } from '../controllers/admin.controller.js';
 import { getSupplyCount } from '../controllers/admin.controller.js';
 import { getMonthlySalesCount } from '../controllers/admin.controller.js';
+import { getMonthlyIncome } from '../controllers/admin.controller.js';
 
 
 const router = express.Router();
@@ -52,6 +53,9 @@ router.get('/supply-count', protect, adminOnly, getSupplyCount);
 
 // Protected route to get monthly sales count
 router.get('/sales-count-monthly',protect, adminOnly, getMonthlySalesCount);
+
+// GET monthly income - only for admins
+router.get('/monthly-income', protect, adminOnly, getMonthlyIncome);
 
 
 

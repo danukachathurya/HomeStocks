@@ -7,6 +7,7 @@ import Inventory from "../models/inventory.model.js";
 import Product from "../models/product.model.js";
 import Checkout from "../models/checkout.model.js";
 
+
 const allowedRoles = ['inventorymanager', 'supplier', 'user'];
 
 // Admin Login Controller
@@ -272,6 +273,36 @@ export const getMonthlySalesCount = async (req, res, next) => {
     });
 
     res.status(200).json({ monthlySalesCount: totalItemsSold });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+// Get total income in the current month
+export const getMonthlyIncome = async (req, res, next) => {
+  try {
+    if (!req.user?.isAdmin) {
+      return res.status(403).json({ message: 'Only admins can view monthly income.' });
+    }
+
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    const checkouts = await Checkout.find({
+      createdAt: {
+        $gte: firstDayOfMonth,
+        $lte: lastDayOfMonth
+      }
+    });
+
+    // Sum up all totalPrice fields
+    const monthlyIncome = checkouts.reduce((sum, checkout) => {
+      return sum + (checkout.totalPrice || 0);
+    }, 0);
+
+    res.status(200).json({ monthlyIncome });
   } catch (error) {
     next(error);
   }
