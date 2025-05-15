@@ -5,25 +5,33 @@ const AdminOverview = () => {
   const [userCount, setUserCount] = useState(null);
   const [inventoryCount, setInventoryCount] = useState(null);
   const [supplyCount, setSupplyCount] = useState(null);
-  const [productCount, setProductCount] = useState(null); // ✅ NEW
+  const [productCount, setProductCount] = useState(null);
+  const [monthlySalesCount, setMonthlySalesCount] = useState(null); // ✅ NEW
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchCounts = async () => {
       try {
-        const [userRes, inventoryRes, supplyRes, productRes] =
-          await Promise.all([
-            axios.get("/api/admin/user-count", { withCredentials: true }),
-            axios.get("/api/admin/inventory-count", { withCredentials: true }),
-            axios.get("/api/admin/supply-count", { withCredentials: true }),
-            axios.get("/api/admin/product-count", { withCredentials: true }), // ✅ NEW
-          ]);
+        const [
+          userRes,
+          inventoryRes,
+          supplyRes,
+          productRes,
+          salesRes
+        ] = await Promise.all([
+          axios.get("/api/admin/user-count", { withCredentials: true }),
+          axios.get("/api/admin/inventory-count", { withCredentials: true }),
+          axios.get("/api/admin/supply-count", { withCredentials: true }),
+          axios.get("/api/admin/product-count", { withCredentials: true }),
+          axios.get("/api/admin/sales-count-monthly", { withCredentials: true }) // ✅ NEW
+        ]);
 
         setUserCount(userRes.data.totalUsers);
         setInventoryCount(inventoryRes.data.totalInventories);
         setSupplyCount(supplyRes.data.totalSupplies);
-        setProductCount(productRes.data.totalProducts); // ✅ NEW
+        setProductCount(productRes.data.totalProducts);
+        setMonthlySalesCount(salesRes.data.monthlySalesCount); // ✅ NEW
       } catch (err) {
         console.error(err);
         setError("Failed to fetch counts.");
@@ -81,13 +89,23 @@ const AdminOverview = () => {
             </p>
           </div>
 
-          {/* Total Products - will wrap below due to 3-column grid */}
+          {/* Total Products */}
           <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
             <h3 className="text-lg font-semibold text-gray-700 mb-1">
               🛒 Total Products
             </h3>
             <p className="text-4xl font-extrabold text-red-600">
               {productCount}
+            </p>
+          </div>
+
+          {/* Monthly Sales Count */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+            <h3 className="text-lg font-semibold text-gray-700 mb-1">
+              💰 Monthly Sales
+            </h3>
+            <p className="text-4xl font-extrabold text-yellow-600">
+              {monthlySalesCount}
             </p>
           </div>
         </div>

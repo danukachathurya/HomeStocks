@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import Supply from "../models/supply.model.js";
 import Inventory from "../models/inventory.model.js";
 import Product from "../models/product.model.js";
+import Checkout from "../models/checkout.model.js";
 
 const allowedRoles = ['inventorymanager', 'supplier', 'user'];
 
@@ -240,6 +241,42 @@ export const getSupplyCount = async (req, res, next) => {
     next(error);
   }
 };
+
+
+// Get total quantity of items sold in the current month
+export const getMonthlySalesCount = async (req, res, next) => {
+  try {
+    if (!req.user?.isAdmin) {
+      return res.status(403).json({ message: 'Only admins can view monthly sales count.' });
+    }
+
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    const checkouts = await Checkout.find({
+      createdAt: {
+        $gte: firstDayOfMonth,
+        $lte: lastDayOfMonth
+      }
+    });
+
+    // Sum total quantity of items in all cartItems arrays
+    let totalItemsSold = 0;
+    checkouts.forEach((checkout) => {
+      if (Array.isArray(checkout.cartItems)) {
+        checkout.cartItems.forEach(item => {
+          totalItemsSold += item.quantity || 1; // fallback to 1 if quantity is missing
+        });
+      }
+    });
+
+    res.status(200).json({ monthlySalesCount: totalItemsSold });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 
 
